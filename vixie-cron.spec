@@ -248,12 +248,6 @@ else
 fi
 touch /var/log/cron
 chmod 600 /var/log/cron
-if [ -f /etc/cron.d/cron.allow ]; then
-	mv /etc/cron.d/cron.allow /etc/cron/cron.deny
-fi
-if [ -f /etc/cron.d/cron.deny ]; then
-	/etc/cron.d/cron.deny /etc/cron/cron.deny
-fi
 
 %preun
 if [ "$1" = "0" ]; then
@@ -261,6 +255,14 @@ if [ "$1" = "0" ]; then
 		/etc/rc.d/init.d/crond stop >&2
 	fi
 	/sbin/chkconfig --del crond
+fi
+
+%triggerpostun -- vixie-cron <= 3.0.1-73
+if [ -f /etc/cron.d/cron.allow* ]; then
+	mv /etc/cron.d/cron.allow* /etc/cron/cron.deny
+fi
+if [ -f /etc/cron.d/cron.deny* ]; then
+	/etc/cron.d/cron.deny* /etc/cron/cron.deny
 fi
 
 %triggerpostun -- hc-cron
