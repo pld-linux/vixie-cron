@@ -83,7 +83,7 @@ daha geliþmiþ yapýlandýrma seçenekleri içerir.
 %patch12 -p1
 
 %build
-make
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
