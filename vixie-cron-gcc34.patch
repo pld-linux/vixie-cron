@@ -1,0 +1,10 @@
+--- vixie-cron-3.0.1/database.c.orig	2004-03-01 17:48:46.000000000 +0100
++++ vixie-cron-3.0.1/database.c	2004-03-01 17:57:32.233488040 +0100
+@@ -393,6 +393,7 @@
+ 	    }
+ 	  }
+ selinux_out:
++((void)0);
+ 	}
+ #endif
+ 	u = load_user(crontab_fd, pw, fname);
