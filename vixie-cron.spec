@@ -297,6 +297,8 @@ fi
 /bin/chgrp crontab /var/log/cron
 /bin/chmod 1770 /var/spool/cron
 /bin/chgrp crontab /var/spool/cron
+/bin/chmod 660 /etc/cron/cron.*
+/bin/chgrp crontab /etc/cron/cron.*
 
 %triggerpostun -- vixie-cron <= 3.0.1-73
 if [ -f /etc/cron.d/cron.allow.rpmsave ]; then
