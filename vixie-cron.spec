@@ -5,13 +5,14 @@ Summary(pl):	Demon Vixie cron
 Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
 Name:		vixie-cron
 Version:	3.0.1
-Release:	28
+Release:	34
 Copyright:	distributable
 Group:		Daemons
 Group(pl):	Serwery
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
 Source1:	vixie-cron.init
 Source2:	cron.log
+Source3:	cron.sysconfig
 Patch0:		vixie-cron-3.0.1-redhat.patch
 Patch1:		vixie-cron-3.0.1-security.patch
 Patch3:		vixie-cron-3.0.1-badsig.patch
@@ -19,8 +20,10 @@ Patch4:		vixie-cron-3.0.1-crontab.patch
 Patch5:		vixie-cron-3.0.1-sigchld.patch
 Patch6:		vixie-cron-3.0.1-sprintf.patch
 Patch7:		vixie-cron-3.0.1-sigchld2.patch
-Patch8:		vixie-cron-3.0.1-syscrondir.patch
+Patch8:		vixie-cron-3.0.1-crond.patch
+Patch9:		vixie-cron-3.0.1-dst.patch
 Prereq:		/sbin/chkconfig
+Conflicts:	hc-cron
 Buildroot:	/tmp/%{name}-%{version}-root
 
 %description
@@ -54,14 +57,15 @@ daha geliþmiþ yapýlandýrma seçenekleri içerir.
 
 %prep
 %setup -q
-%patch0 -p1 -b .norh
-%patch1 -p1 -b .nomisc
-%patch3 -p1 -b .badsig
-%patch4 -p1 -b .crontabhole
-%patch5 -p1 -b .sigchld
-%patch6 -p1 -b .sprintf
-%patch7 -p1 -b .sigchld
-%patch8 -p1 -b .syscrondir
+%patch0 -p1
+%patch1 -p1
+%patch3 -p1
+%patch4 -p1
+%patch5 -p1
+%patch6 -p1
+%patch7 -p1
+%patch8 -p1
+%patch9 -p1
 
 %build
 make
@@ -70,15 +74,16 @@ make
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_sbindir},%{_bindir},%{_mandir}/man{1,5,8}} \
 	$RPM_BUILD_ROOT/var/spool/cron \
-	$RPM_BUILD_ROOT/etc/{crontab.d,rc.d/init.d,logrotate.d}
+	$RPM_BUILD_ROOT/etc/{crontab.d,rc.d/init.d,logrotate.d,sysconfig}
 
 install -s cron $RPM_BUILD_ROOT%{_sbindir}/crond
 install -s crontab $RPM_BUILD_ROOT%{_bindir}
 install crontab.1 $RPM_BUILD_ROOT%{_mandir}/man1
 install crontab.5 $RPM_BUILD_ROOT%{_mandir}/man5
 install cron.8 $RPM_BUILD_ROOT%{_mandir}/man8
-install $RPM_SOURCE_DIR/vixie-cron.init $RPM_BUILD_ROOT/etc/rc.d/init.d/crond
-install $RPM_SOURCE_DIR/cron.log $RPM_BUILD_ROOT/etc/logrotate.d/cron
+install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/crond
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/cron
+install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/cron
 
 echo ".so cron.8" >$RPM_BUILD_ROOT%{_mandir}/man8/crond.8
 
