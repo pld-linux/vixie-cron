@@ -42,6 +42,7 @@ case "$1" in
 	else
 		msg_Not_Running "Vixie cron"
 		exit 1
+	fi
 	;;
   status)
 	status crond
@@ -76,6 +77,7 @@ case "$1" in
   *)
 	echo "Usage: $0 {start|stop|restart|reload|force-reload|status}"
 	exit 1
+	;;
 esac
 
 exit $RETVAL
