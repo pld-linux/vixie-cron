@@ -40,7 +40,7 @@
  	new_db.head = new_db.tail = NULL;
  
  	if (syscron_stat.st_mtime) {
-@@ -90,6 +98,41 @@
+@@ -90,6 +98,42 @@
  				SYSCRONTAB, &syscron_stat,
  				&new_db, old_db);
  	}
@@ -60,7 +60,7 @@
 +		 * to getpwnam() for . and .., and there shouldn't be 
 +		 * hidden files in here anyway
 +		 */
-+		if (dp->d_name[0] == '.')
++		if ((dp->d_name[0] == '.') || (dp->d_name[0] == '#'))
 +			continue;
 +
 +		/* ignore files ending with ~ */
@@ -69,7 +69,8 @@
 +
 +		/* ignore *.rpmnew and *.rpmsave files */
 +		if ((ln > 7 && strstr(&dp->d_name[ln-7], ".rpmnew")) ||
-+			(ln > 8 && strstr(&dp->d_name[ln-8], ".rpmsave")))
++			(ln > 8 && strstr(&dp->d_name[ln-8], ".rpmsave")) ||
++			(ln > 8 && strstr(&dp->d_name[ln-8], ".rpmorig")))
 +			continue;
 +
 +		(void) strcpy(fname, dp->d_name);
