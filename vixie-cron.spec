@@ -5,7 +5,7 @@ Summary(pl):	Demon Vixie cron
 Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
 Name:		vixie-cron
 Version:	3.0.1
-Release:	60
+Release:	61
 License:	distributable
 Group:		Daemons
 Group(de):	Server
@@ -32,6 +32,7 @@ Patch12:	%{name}-DESTDIR.patch
 Patch13:	%{name}-linux.patch
 Patch14:	%{name}-crontabloc.patch
 Patch15:	%{name}-nodot.patch
+Patch16:	%{name}-time.h.patch
 Prereq:		/sbin/chkconfig
 Provides:	crontabs >= 1.7
 Obsoletes:	crontabs
@@ -90,6 +91,7 @@ daha güvenlidir ve daha geliþmiþ yapýlandýrma seçenekleri içerir.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
 
 %build
 %{__make}
