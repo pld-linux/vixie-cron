@@ -231,7 +231,7 @@ done
 touch $RPM_BUILD_ROOT/var/log/cron
 
 cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.allow << EOF
-# corn.allow   This file describes the names of the users which are
+# cron.allow   This file describes the names of the users which are
 #               allowed to use the local cron daemon
 root
 EOF
