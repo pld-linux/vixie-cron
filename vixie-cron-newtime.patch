@@ -1,0 +1,10 @@
+--- vixie-cron-3.0.1/cron.c.aargh	Mon Feb 12 14:39:51 2001
++++ vixie-cron-3.0.1/cron.c	Mon Feb 12 14:40:08 2001
+@@ -27,6 +27,7 @@
+ #include <sys/signal.h>
+ #if SYS_TIME_H
+ # include <sys/time.h>
++# include <time.h>
+ #else
+ # include <time.h>
+ #endif
