@@ -362,7 +362,7 @@ done
 %attr(0640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
 %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/cron
 %attr(0754,root,root) /etc/rc.d/init.d/crond
-%config /etc/logrotate.d/cron
+%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/cron
 %attr(0755,root,root) %{_sbindir}/crond
 %attr(2755,root,crontab) %{_bindir}/crontab
 
