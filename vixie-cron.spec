@@ -55,17 +55,19 @@ Patch20:	%{name}-noroot.patch
 Patch21:	%{name}-allow_location.patch
 Patch22:	%{name}-pam.patch
 Patch23:	%{name}-sgid-crontab.patch
+PreReq:		rc-scripts
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/usr/sbin/groupadd
+Requires(post,preun):	/sbin/chkconfig
+Requires(post):	fileutils
+Requires(postun):      /usr/sbin/groupdel
+Requires:	/bin/run-parts
+Requires:	psmisc >= 20.1
 Provides:	crontabs >= 1.7
 Provides:	crondaemon
 Obsoletes:	crontabs
 Obsoletes:	crondaemon
 Obsoletes:	hc-cron
-Prereq:		rc-scripts
-Prereq:		/sbin/chkconfig
-Requires:	/bin/run-parts
-Requires:	psmisc >= 20.1
-Requires(pre): /usr/sbin/groupadd
-Requires(postun):      /usr/sbin/groupdel
 BuildRequires:	pam-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -253,17 +255,18 @@ EOF2
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
-if [ -n "`getgid crontab`" ]; then
-       if [ "`getgid crontab`" != "117" ]; then
-               echo "Error: group crontab doesn't have gid=117. Correct this before installing cron." 1>&2
-               exit 1
-       fi
+%pre
+if [ -n "`/usr/bin/getgid crontab`" ]; then
+	if [ "`/usr/bin/getgid crontab`" != "117" ]; then
+		echo "Error: group crontab doesn't have gid=117. Correct this before installing cron." 1>&2
+		exit 1
+	fi
 else
-       echo "Adding group crontab GID=117."
-       /usr/sbin/groupadd -g 117 -r -f crontab
+	echo "Adding group crontab GID=117."
+	/usr/sbin/groupadd -g 117 -r -f crontab
 fi
 
+%post
 /sbin/chkconfig --add crond
 if [ -f /var/lock/subsys/crond ]; then
 	/etc/rc.d/init.d/crond restart >&2
@@ -279,11 +282,13 @@ if [ "$1" = "0" ]; then
 		/etc/rc.d/init.d/crond stop >&2
 	fi
 	/sbin/chkconfig --del crond
-
-       echo "Removing group crontab."
-       /usr/sbin/groupdel crontab
 fi
 
+%postun
+if [ "$1" = "0" ]; then
+	echo "Removing group crontab."
+	/usr/sbin/groupdel crontab
+fi
 
 %triggerpostun -- vixie-cron <= 3.0.1-73
 if [ -f /etc/cron.d/cron.allow.rpmsave ]; then
