@@ -1,0 +1,12 @@
+--- vixie-cron-3.0.1/crontab.5.foo	Mon Aug  7 23:22:13 2000
++++ vixie-cron-3.0.1/crontab.5	Mon Aug  7 23:23:13 2000
+@@ -170,6 +170,9 @@
+ 23 0-23/2 * * * echo "run 23 minutes after midn, 2am, 4am ..., everyday"
+ 5 4 * * sun     echo "run at 5 after 4 every sunday"
+ .fi
++.SH FILES
++/etc/crontab			System crontab file
++
+ .SH SEE ALSO
+ cron(8), crontab(1)
+ .SH EXTENSIONS

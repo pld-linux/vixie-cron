@@ -13,7 +13,7 @@
  	}
  
 +	if (stat("/etc/cron.d", &crond_stat) < OK) {
-+		log_it("CRON", getpid(), "STAT FAILED", SPOOL_DIR);
++		log_it("CRON", getpid(), "STAT FAILED", "/etc/cron.d");
 +		(void) exit(ERROR_EXIT);
 +	}
 +
