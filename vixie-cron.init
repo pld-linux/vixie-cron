@@ -37,7 +37,7 @@
 # Get service config
 [ -f /etc/sysconfig/cron ] && . /etc/sysconfig/cron
 
-
+RETVAL=0
 # See how we were called.
 case "$1" in
   start)
@@ -49,26 +49,25 @@ case "$1" in
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/crond
 	else
 		msg_already_running "Vixie cron"
-		exit 1
 	fi
 	;;
   stop)
 	if [ -f /var/lock/subsys/crond ]; then
 		msg_stopping "Vixie cron"
 		killproc crond
-		RETVAL=$?
 		rm -f /var/lock/subsys/crond
 	else
 		msg_not_running "Vixie cron"
-		exit 1
 	fi
 	;;
   status)
 	status crond
+	exit $?
 	;;
   restart)
 	$0 stop
 	$0 start
+	exit $?
 	;;
   reload|force-reload)
 	if [ -f /var/lock/subsys/crond ]; then
@@ -76,14 +75,13 @@ case "$1" in
 		killproc crond -HUP
 		RETVAL=$?
 	else
-		msg_not_running "Vixie cron"
-		exit 1
+		msg_not_running "Vixie cron" >&2
+		exit 7
 	fi
 	;;
   *)
 	msg_usage "$0 {start|stop|restart|reload|force-reload|status}"
-	exit 1
-	;;
+	exit 3
 esac
 
 exit $RETVAL
