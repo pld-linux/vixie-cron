@@ -291,8 +291,8 @@ if [ "$1" = "0" ]; then
 fi
 
 %triggerpostun  -- vixie-cron <= 3.0.1-80
-chmod 660 /var/spool/cron/*
-chown crontab /var/spool/cron/*
+/bin/chmod 660 /var/spool/cron/*
+/bin/chgrp crontab /var/spool/cron/*
 
 %triggerpostun -- vixie-cron <= 3.0.1-73
 if [ -f /etc/cron.d/cron.allow.rpmsave ]; then
