@@ -7,6 +7,24 @@
 #		programs at periodic scheduled times. vixie cron adds a \
 #		number of features to the basic UNIX cron, including better \
 #		security and more powerful configuration options.
+# description(es): cron es un programa UNIX patrСn que ejecuta comandos \
+#               especificados por el usuario a horas programadas. \
+#               Vixie cron aЯade una serie de caracterМsticas al cron \
+#               bАsico, incluyendo seguridad mejorada y opciones de configuraciСn \
+#               mАs poderosas.
+# description(pt_BR): cron И um programa UNIX padrЦo que executa comandos \
+#              especificados pelo usuАrio em horАrios agendados. \
+#              O Vixie cron adiciona uma sИrie de caracterМsticas ao cron \
+#              bАsico, incluindo seguranГa melhorada e opГУes de configuraГЦo \
+#              mais poderosas.
+# description(ru): cron - это стандартная для UNIX программа, запускающая \
+#              заданные пользователем программы по расписанию. vixie cron \
+#              добавляет к стандартному UNIX cron'у новые опции, включая \
+#              повышенную безопасность и более мощные опции конфигурации.
+# description(uk): cron - це стандартна для UNIX програма, яка запуска╓ \
+#              задан╕ користувачем програми за розкладом. vixie cron \
+#              дода╓ до стандартного UNIX cron'у нов╕ опц╕╖, включаючи \
+#              п╕двищену безпечн╕сть та б╕льш потужн╕ опц╕╖ конф╕гурац╕╖.
 #
 # processname:	crond
 # config:	/etc/crontab
