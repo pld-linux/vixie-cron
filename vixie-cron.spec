@@ -20,7 +20,7 @@ Summary(sk):	Vixie cron démon na spú¹»anie daných programov v urèený èas
 Summary(sl):	Stre¾nik Vixie cron za izvajanje programov ob doloèenih èasih
 Summary(sv):	Vixie-cron-demonen för att köra angivna program vid bestämda tider
 Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
-Summary(uk):	Vixie cron  - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
+Summary(uk):	Vixie cron - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ÐÐÖ¸¶¨³ÌÐòµÄ Vixie cron ºóÌ¨³ÌÐò¡£
 Name:		vixie-cron
 Version:	3.0.1
@@ -70,7 +70,7 @@ Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(post,preun):	/sbin/chkconfig
 Requires(post):	fileutils
-Requires(postun):      /usr/sbin/groupdel
+Requires(postun):	/usr/sbin/groupdel
 Requires:	/bin/run-parts
 Requires:	psmisc >= 20.1
 Provides:	crontabs >= 1.7
@@ -257,14 +257,14 @@ done
 touch $RPM_BUILD_ROOT/var/log/cron
 
 cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.allow << EOF
-# cron.allow   This file describes the names of the users which are
-#               allowed to use the local cron daemon
+# cron.allow	This file describes the names of the users which are
+#		allowed to use the local cron daemon
 root
 EOF
 
 cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.deny << EOF2
-# cron.deny    This file describes the names of the users which are
-#               NOT allowed to use the local cron daemon
+# cron.deny	This file describes the names of the users which are
+#		NOT allowed to use the local cron daemon
 EOF2
 
 %clean
@@ -356,7 +356,7 @@ done
 %defattr(644,root,root,755)
 %doc CHANGES CONVERSION FEATURES MAIL README THANKS
 %attr(0750,root,crontab) %dir %{_sysconfdir}/cron*
-%attr(0640,root,crontab) %config(noreplace) /etc/cron.d/crontab
+%attr(0640,root,crontab) %config(noreplace,missingok) /etc/cron.d/crontab
 %attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
 %attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
 %attr(0640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
