@@ -1,26 +1,27 @@
-Summary:     Vixie cron daemon
-Summary(de): Vixie cron daemon 
-Summary(fr): Démon Vixie cron
-Summary(pl): Demon Vixie cron
-Summary(tr): Vixie cron süreci, periyodik program çalýþtýrma yeteneði
-Name:        vixie-cron
-Version:     3.0.1
-Release:     28
-Copyright:   distributable
-Group:       Daemons
-Source0:     ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
-Source1:     vixie-cron.init
-Source2:     cron.log
-Patch0:      vixie-cron-3.0.1-redhat.patch
-Patch1:      vixie-cron-3.0.1-security.patch
-Patch3:      vixie-cron-3.0.1-badsig.patch
-Patch4:      vixie-cron-3.0.1-crontab.patch
-Patch5:      vixie-cron-3.0.1-sigchld.patch
-Patch6:      vixie-cron-3.0.1-sprintf.patch
-Patch7:      vixie-cron-3.0.1-sigchld2.patch
-Patch8:      vixie-cron-3.0.1-syscrondir.patch
-Prereq:      /sbin/chkconfig
-Buildroot:   /tmp/%{name}-%{version}-root
+Summary:	Vixie cron daemon
+Summary(de):	Vixie cron daemon 
+Summary(fr):	Démon Vixie cron
+Summary(pl):	Demon Vixie cron
+Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
+Name:		vixie-cron
+Version:	3.0.1
+Release:	28
+Copyright:	distributable
+Group:		Daemons
+Group(pl):	Serwery
+Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
+Source1:	vixie-cron.init
+Source2:	cron.log
+Patch0:		vixie-cron-3.0.1-redhat.patch
+Patch1:		vixie-cron-3.0.1-security.patch
+Patch3:		vixie-cron-3.0.1-badsig.patch
+Patch4:		vixie-cron-3.0.1-crontab.patch
+Patch5:		vixie-cron-3.0.1-sigchld.patch
+Patch6:		vixie-cron-3.0.1-sprintf.patch
+Patch7:		vixie-cron-3.0.1-sigchld2.patch
+Patch8:		vixie-cron-3.0.1-syscrondir.patch
+Prereq:		/sbin/chkconfig
+Buildroot:	/tmp/%{name}-%{version}-root
 
 %description
 cron is a standard UNIX program that runs user-specified programs at
@@ -67,7 +68,7 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/usr/{sbin,bin,man/man{1,5,8}} \
+install -d $RPM_BUILD_ROOT{%{_sbindir},%{_bindir},%{_mandir}/man{1,5,8}} \
 	$RPM_BUILD_ROOT/var/spool/cron \
 	$RPM_BUILD_ROOT/etc/{crontab.d,rc.d/init.d,logrotate.d}
 
