@@ -20,7 +20,7 @@ Summary(uk):	Vixie cron  - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ÐÐÖ¸¶¨³ÌÐòµÄ Vixie cron ºóÌ¨³ÌÐò¡£
 Name:		vixie-cron
 Version:	3.0.1
-Release:	75
+Release:	75.1
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
@@ -29,6 +29,7 @@ Source2:	cron.logrotate
 Source3:	cron.sysconfig
 Source4:	%{name}.crontab
 Source5:	%{name}-non-english-man-pages.tar.bz2
+Source6:	%{name}.pam
 Patch0:		%{name}-redhat.patch
 Patch1:		%{name}-security.patch
 Patch3:		%{name}-badsig.patch
@@ -50,6 +51,7 @@ Patch18:	%{name}-name.patch
 Patch19:	%{name}-security3.patch
 Patch20:	%{name}-noroot.patch
 Patch21:	%{name}-allow_location.patch
+Patch22:	%{name}-pam.patch
 Provides:	crontabs >= 1.7
 Provides:	crondaemon
 Obsoletes:	crontabs
@@ -59,6 +61,7 @@ Prereq:		rc-scripts
 Prereq:		/sbin/chkconfig
 Requires:	/bin/run-parts
 Requires:	psmisc >= 20.1
+BuildRequires:	pam-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -188,6 +191,7 @@ vixie-cron Èí¼þ°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 %patch19 -p1
 %patch20 -p1
 %patch21 -p1
+%patch22 -p1
 
 %build
 %{__make} CC=%{__cc} RPM_OPT_FLAGS="%{rpmcflags}" LDFLAGS="%{rpmldflags}"
@@ -196,7 +200,7 @@ vixie-cron Èí¼þ°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}} \
 	$RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,sysconfig} \
-	$RPM_BUILD_ROOT%{_sysconfdir}/{cron,cron.{d,hourly,daily,weekly,monthly}}
+	$RPM_BUILD_ROOT%{_sysconfdir}/{cron,cron.{d,hourly,daily,weekly,monthly},pam.d}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -206,6 +210,7 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/crond
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/cron
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/cron
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/cron.d/crontab
+install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/cron
 
 for a in fi fr id ja ko pl ; do
 	if test -f $a/man1/crontab.1 ; then
@@ -225,13 +230,13 @@ done
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
-cat > $RPM_BUILD_ROOT/etc/cron/cron.allow << EOF
+cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.allow << EOF
 # hosts.allow   This file describes the names of the users which are
 #               allowed to use the local cron daemon
 root
 EOF
 
-cat > $RPM_BUILD_ROOT/etc/cron/cron.deny << EOF2
+cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.deny << EOF2
 # hosts.deny    This file describes the names of the users which are
 #               NOT allowed to use the local cron daemon
 EOF2
@@ -287,8 +292,9 @@ fi
 %defattr(644,root,root,755)
 %attr(0750,root,root) %dir %{_sysconfdir}/cron*
 %attr(0644,root,root) %config(noreplace) /etc/cron.d/crontab
-%attr(0644,root,root) %config(noreplace,missingok) %verify(not md5 mtime size) /etc/cron/cron.allow
-%attr(0644,root,root) %config(noreplace,missingok) %verify(not md5 mtime size) /etc/cron/cron.deny
+%attr(0644,root,root) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
+%attr(0644,root,root) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
+%config(noreplace) %verify(not md5 size mtime) /etc/pam.d/cron
 %attr(0754,root,root) /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
 %attr(0755,root,root) %{_sbindir}/crond
