@@ -5,7 +5,7 @@ Summary(pl):	Demon Vixie cron
 Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
 Name:		vixie-cron
 Version:	3.0.1
-Release:	66
+Release:	67
 License:	Distributable
 Group:		Daemons
 Group(de):	Server
@@ -15,10 +15,10 @@ Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
 Source4:	%{name}.crontab
-Source5:	crontab.1.pl
-Source6:	cron.8.pl
+Source5:	%{name}-non-english-man-pages.tar.bz2
 Patch0:		%{name}-redhat.patch
 Patch1:		%{name}-security.patch
+Patch2:		%{name}-pl_man.patch
 Patch3:		%{name}-badsig.patch
 Patch4:		%{name}-crontab.patch
 Patch5:		%{name}-sigchld.patch
@@ -80,9 +80,10 @@ cron UNIX'de standart olarak belirli zamanlarda bir programý
 daha güvenlidir ve daha geliþmiþ yapýlandýrma seçenekleri içerir.
 
 %prep
-%setup -q
+%setup -q -a5
 %patch0 -p1
 %patch1 -p1
+%patch2 -p0
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
@@ -107,7 +108,7 @@ daha güvenlidir ve daha geliþmiþ yapýlandýrma seçenekleri içerir.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}/pl/man{1,8}} \
+install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}} \
 	$RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,sysconfig} \
 	$RPM_BUILD_ROOT%{_sysconfdir}/cron.{d,hourly,daily,weekly,monthly}
 
@@ -119,8 +120,22 @@ install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/crond
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/cron
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/cron
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/cron.d/crontab
-install %{SOURCE5} $RPM_BUILD_ROOT%{_mandir}/pl/man1/crontab.1
-install %{SOURCE6} $RPM_BUILD_ROOT%{_mandir}/pl/man8/cron.8
+
+for a in fi fr id ja ko pl ; do
+	if test -f $a/man1/crontab.1 ; then
+		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man1
+		install $a/man1/crontab.1 $RPM_BUILD_ROOT%{_mandir}/$a/man1
+	fi
+	if test -f $a/man5/crontab.5 ; then
+		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man5
+		install $a/man5/crontab.5 $RPM_BUILD_ROOT%{_mandir}/$a/man5
+	fi
+	if test -f $a/man8/cron.8 ; then
+		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man8
+		install $a/man8/cron.8 $RPM_BUILD_ROOT%{_mandir}/$a/man8
+		echo .so cron.8 > $RPM_BUILD_ROOT%{_mandir}/$a/man8/crond.8
+	fi
+done
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
@@ -159,6 +174,11 @@ fi
 %attr(4755,root,root) %{_bindir}/crontab
 
 %{_mandir}/man*/*
+%lang(fi) %{_mandir}/fi/man*/*
+%lang(fr) %{_mandir}/fr/man*/*
+%lang(id) %{_mandir}/id/man*/*
+%lang(ja) %{_mandir}/ja/man*/*
+%lang(ko) %{_mandir}/ko/man*/*
 %lang(pl) %{_mandir}/pl/man*/*
 
 %attr(0700,root,root) /var/spool/cron
