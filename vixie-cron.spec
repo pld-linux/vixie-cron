@@ -24,7 +24,7 @@ Summary(uk):	Vixie cron - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ÐÐÖ¸¶¨³ÌÐòµÄ Vixie cron ºóÌ¨³ÌÐò¡£
 Name:		vixie-cron
 Version:	3.0.1
-Release:	91
+Release:	92
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
@@ -77,7 +77,6 @@ Provides:	crontabs >= 1.7
 Provides:	crondaemon
 Provides:	group(crontab)
 Obsoletes:	crontabs
-Obsoletes:	crondaemon
 Obsoletes:	fcron
 Obsoletes:	hc-cron
 Obsoletes:	mcron
