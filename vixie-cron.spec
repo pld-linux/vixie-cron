@@ -5,11 +5,11 @@ Summary(pl):	Demon Vixie cron
 Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
 Name:		vixie-cron
 Version:	3.0.1
-Release:	57
-Copyright:	distributable
+Release:	58
+License:	distributable
 Group:		Daemons
-Group(pl):	Serwery
 Group(de):	Server
+Group(pl):	Serwery
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	cron.logrotate
@@ -114,8 +114,6 @@ install %{SOURCE6} $RPM_BUILD_ROOT%{_mandir}/pl/man8/cron.8
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
-gzip -9nf $RPM_BUILD_ROOT%{_mandir}/{man?/*,pl/man?/*}
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -138,6 +136,7 @@ if [ "$1" = "0" ]; then
 fi
 
 %triggerpostun -- hc-cron
+/sbin/chkconfig --del crond
 /sbin/chkconfig --add crond
 
 %files
