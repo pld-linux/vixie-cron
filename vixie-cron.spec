@@ -20,7 +20,7 @@ Summary(uk):	Vixie cron  - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ÐÐÖ¸¶¨³ÌÐòµÄ Vixie cron ºóÌ¨³ÌÐò¡£
 Name:		vixie-cron
 Version:	3.0.1
-Release:	77
+Release:	78
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
@@ -231,13 +231,13 @@ done
 touch $RPM_BUILD_ROOT/var/log/cron
 
 cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.allow << EOF
-# hosts.allow   This file describes the names of the users which are
+# corn.allow   This file describes the names of the users which are
 #               allowed to use the local cron daemon
 root
 EOF
 
 cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.deny << EOF2
-# hosts.deny    This file describes the names of the users which are
+# cron.deny    This file describes the names of the users which are
 #               NOT allowed to use the local cron daemon
 EOF2
 
