@@ -167,7 +167,7 @@ fi
 %files
 %defattr(644,root,root,755)
 %attr(0750,root,root) %dir %{_sysconfdir}/cron.*
-/etc/cron.d/crontab
+%attr(0644,root,root) %config(noreplace) /etc/cron.d/crontab
 %attr(0754,root,root) /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
 %attr(0755,root,root) %{_sbindir}/crond
