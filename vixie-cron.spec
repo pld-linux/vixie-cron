@@ -127,7 +127,7 @@ fi
 %defattr(644,root,root,755)
 %attr(0750,root,root) %dir /etc/cron.*
 /etc/cron.d/crontab
-%attr(0744,root,root) %config /etc/rc.d/init.d/crond
+%attr(0754,root,root) /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
 %attr(0700,root,root) %{_sbindir}/crond
 %attr(4755,root,root) %{_bindir}/crontab
