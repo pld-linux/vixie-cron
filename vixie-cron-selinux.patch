@@ -1,0 +1,323 @@
+diff -urN vixie-cron-3.0.1.org/cron.c vixie-cron-3.0.1/cron.c
+--- vixie-cron-3.0.1.org/cron.c	2003-12-27 22:58:34.264140712 +0100
++++ vixie-cron-3.0.1/cron.c	2003-12-27 22:58:43.799691088 +0100
+@@ -100,7 +100,7 @@
+ 		case 0:
+ 			/* child process */
+ 			log_it("CRON",getpid(),"STARTUP","fork ok");
+-			(void) setsid();
++			daemon(1,0);
+ 			break;
+ 		default:
+ 			/* parent process should just die */
+diff -urN vixie-cron-3.0.1.org/database.c vixie-cron-3.0.1/database.c
+--- vixie-cron-3.0.1.org/database.c	2003-12-27 22:58:34.156157128 +0100
++++ vixie-cron-3.0.1/database.c	2003-12-27 22:58:43.795691696 +0100
+@@ -30,6 +30,15 @@
+ #include <sys/stat.h>
+ #include <sys/file.h>
+ 
++#ifdef WITH_SELINUX
++#include <selinux/selinux.h>
++#include <selinux/flask.h>
++#include <selinux/av_permissions.h>
++#define SYSUSERNAME "system_u"
++#else
++#define SYSUSERNAME "*system*"
++#endif
++
+ 
+ #define TMAX(a,b) ((a)>(b)?(a):(b))
+ 
+@@ -96,7 +105,7 @@
+ 	new_db.head = new_db.tail = NULL;
+ 
+ 	if (syscron_stat.st_mtime) {
+-		process_crontab("root", "*system*",
++		process_crontab("root", SYSUSERNAME,
+ 				SYSCRONTAB, &syscron_stat,
+ 				&new_db, old_db);
+ 	}
+@@ -132,7 +141,7 @@
+ 		(void) strcpy(fname, dp->d_name);
+ 		snprintf(tabname, MAXNAMLEN+1, "/etc/cron.d/%s", fname);
+ 
+-		process_crontab("root", "*system*", tabname,
++		process_crontab("root", SYSUSERNAME, tabname,
+ 				&crond_stat, &new_db, old_db);
+ 	}
+ 	closedir(dir);
+@@ -249,7 +258,7 @@
+ 	int		crontab_fd = OK - 1;
+ 	user		*u;
+ 
+-	if (strcmp(fname, "*system*") && !(pw = getpwnam(uname))) {
++	if (strcmp(fname, SYSUSERNAME) && !(pw = getpwnam(uname))) {
+ 		/* file doesn't have a user in passwd file.
+ 		 */
+ 		log_it(fname, getpid(), "ORPHAN", "no passwd entry");
+@@ -333,6 +342,43 @@
+ 		free_user(u);
+ 		log_it(fname, getpid(), "RELOAD", tabname);
+ 	}
++#ifdef WITH_SELINUX
++	if (is_selinux_enabled())	{
++	  security_context_t  file_context=NULL;
++	  security_context_t   user_context=NULL;
++	  struct av_decision avd;
++	  int retval=0;
++
++	  if (fgetfilecon(crontab_fd, &file_context) < OK) {
++	    log_it(fname, getpid(), "getfilecon FAILED", tabname);
++	    goto next_crontab;
++	  }
++
++	  /*
++	   * Since crontab files are not directly executed,
++	   * crond must ensure that the crontab file has
++	   * a context that is appropriate for the context of
++	   * the user cron job.  It performs an entrypoint
++	   * permission check for this purpose.
++	   */
++	  if (get_default_context(fname, NULL, &user_context)) {
++	    log_it(fname, getpid(), "NO CONTEXT", tabname);
++	    freecon(file_context);
++	    goto next_crontab;
++	  }
++	  retval = security_compute_av(user_context,
++				       file_context,
++				       SECCLASS_FILE,
++				       FILE__ENTRYPOINT,
++				       &avd);
++	  freecon(user_context);
++	  freecon(file_context);
++	  if (retval || ((FILE__ENTRYPOINT & avd.allowed) != FILE__ENTRYPOINT)) {
++	    log_it(fname, getpid(), "ENTRYPOINT FAILED", tabname);
++	    goto next_crontab;
++	  }
++	}
++#endif
+ 	u = load_user(crontab_fd, pw, fname);
+ 	if (u != NULL) {
+ 		u->mtime = statbuf->st_mtime;
+diff -urN vixie-cron-3.0.1.org/database.c.orig vixie-cron-3.0.1/database.c.orig
+--- vixie-cron-3.0.1.org/database.c.orig	2003-12-27 22:58:34.298135544 +0100
++++ vixie-cron-3.0.1/database.c.orig	2003-12-27 22:58:23.024849344 +0100
+@@ -24,7 +24,9 @@
+ 
+ 
+ #include "cron.h"
++#define __USE_GNU
+ #include <fcntl.h>
++#undef __USE_GNU
+ #include <sys/stat.h>
+ #include <sys/file.h>
+ 
+@@ -253,8 +255,28 @@
+ 		log_it(fname, getpid(), "ORPHAN", "no passwd entry");
+ 		goto next_crontab;
+ 	}
++#ifdef __linux
++/*
++ * Linux 2.2+, glibc 2.1+.
++ *
++ * This and the checks below are an attempt to reduce the damage that
++ * can be done by someone with write access to the crontab directory.
++ * Once the crontab binary is no longer SUID root, a vulnerability in
++ * crontab wouldn't provide root access any longer, so it makes sense
++ * for cron to not trust the directory contents.
++ */
++	if ((crontab_fd = open(tabname, O_RDONLY | O_NOFOLLOW, 0)) < OK) {
++#else
++/*
++ * XXX: should use lstat before open and a dev/ino check afterwards.
++ * In fact, that would be helpful with O_NOFOLLOW as well due to the
++ * side-effects on open and possibility for device hard links.  (Write
++ * access to the crontab directory implies DoS possibilities for cron,
++ * but doesn't have to allow for new attacks on the rest of the system.)
++ */ 
+ 
+ 	if ((crontab_fd = open(tabname, O_RDONLY, 0)) < OK) {
++#endif
+ 		/* crontab not accessible?
+ 		 */
+ 		log_it(fname, getpid(), "CAN'T OPEN", tabname);
+@@ -266,6 +288,26 @@
+ 		goto next_crontab;
+ 	}
+ 
++	if (pw &&
++	    statbuf->st_uid != pw->pw_uid &&
++	    statbuf->st_uid != ROOT_UID) {
++		log_it(fname, getpid(), "WRONG FILE OWNER", tabname);
++		goto next_crontab;
++	}
++
++/*
++ * The link count check is not sufficient (the owner may delete their
++ * original link, reducing the link count back to 1), but this is all
++ * we've got.
++ */
++	if (pw &&
++	    (!S_ISREG(statbuf->st_mode) ||
++	    statbuf->st_nlink != 1 ||
++	    (statbuf->st_mode & 07777) != 0600)) {
++		log_it(fname, getpid(), "WRONG INODE INFO", tabname); 
++		goto next_crontab;
++	}
++
+ 	Debug(DLOAD, ("\t%s:", fname))
+ 	u = find_user(old_db, fname);
+ 	if (u != NULL) {
+diff -urN vixie-cron-3.0.1.org/do_command.c vixie-cron-3.0.1/do_command.c
+--- vixie-cron-3.0.1.org/do_command.c	2003-12-27 22:58:34.094166552 +0100
++++ vixie-cron-3.0.1/do_command.c	2003-12-27 22:58:43.797691392 +0100
+@@ -19,6 +19,9 @@
+ static char rcsid[] = "$Id$";
+ #endif
+ 
++#ifdef WITH_SELINUX
++#include <selinux/selinux.h>
++#endif
+ 
+ #include "cron.h"
+ #include <sys/signal.h>
+@@ -273,6 +276,20 @@
+ 			 */
+ 			(void) signal(SIGCHLD, SIG_DFL);
+ #endif
++#ifdef WITH_SELINUX
++			if (is_selinux_enabled()) {
++			  security_context_t scontext;
++			  if (get_default_context(u->name, NULL, &scontext)) {
++			    fprintf(stderr, "execle: couldn't get security context for user %s\n", u->name); 
++			    _exit(ERROR_EXIT);
++			  }
++			  if (setexeccon(scontext) < 0) {
++			    fprintf(stderr, "Could not set exec context to %s for user  %s\n", scontext,u->name);
++			    _exit(ERROR_EXIT);
++			  }
++			  freecon(scontext);
++			}
++#endif
+ 			execle(shell, shell, "-c", e->cmd, (char *)0, e->envp);
+ 			fprintf(stderr, "execl: couldn't exec `%s'\n", shell);
+ 			perror("execl");
+diff -urN vixie-cron-3.0.1.org/do_command.c.orig vixie-cron-3.0.1/do_command.c.orig
+--- vixie-cron-3.0.1.org/do_command.c.orig	2003-12-27 22:58:34.298135544 +0100
++++ vixie-cron-3.0.1/do_command.c.orig	2003-12-27 22:58:23.020849952 +0100
+@@ -29,6 +29,18 @@
+ # include <syslog.h>
+ #endif
+ 
++#include <security/pam_appl.h>
++static pam_handle_t *pamh = NULL;
++static const struct pam_conv conv = {
++	NULL
++};
++#define PAM_FAIL_CHECK if (retcode != PAM_SUCCESS) { \
++	fprintf(stderr,"\n%s\n",pam_strerror(pamh, retcode)); \
++	syslog(LOG_ERR,"%s",pam_strerror(pamh, retcode)); \
++	pam_end(pamh, retcode); exit(1); \
++	}
++
++
+ 
+ static void		child_process __P((entry *, user *)),
+ 			do_univ __P((user *));
+@@ -77,6 +89,7 @@
+ 	register char	*input_data;
+ 	char		*usernm, *mailto;
+ 	int		children = 0;
++	int		retcode = 0;
+ 
+ 	Debug(DPROC, ("[%d] child_process('%s')\n", getpid(), e->cmd))
+ 
+@@ -86,6 +99,7 @@
+ 	/*local*/{
+ 		register char	*pch;
+ 
++		SyslogName = strdup(ProgramName);
+ 		for (pch = ProgramName;  *pch;  pch++)
+ 			*pch = MkUpper(*pch);
+ 	}
+@@ -95,6 +109,21 @@
+ 	usernm = env_get("LOGNAME", e->envp);
+ 	mailto = env_get("MAILTO", e->envp);
+ 
++	/* Check for arguments */
++	if (mailto) {
++		const char	*end;
++
++		/* These chars have to match those cron_popen()
++		 * uses to split the command string */
++		mailto += strspn(mailto, " \t\n");
++		end = mailto + strcspn(mailto, " \t\n");
++		if (*mailto == '-' || *end != '\0') {
++			printf("Bad Mailto karma.\n");
++			log_it("CRON",getpid(),"error","bad mailto");
++			mailto = NULL;
++		}
++	}
++
+ #ifdef USE_SIGCHLD
+ 	/* our parent is watching for our death by catching SIGCHLD.  we
+ 	 * do not care to watch for our children's deaths this way -- we
+@@ -143,6 +172,15 @@
+ 		}
+ 	}
+ 
++	retcode = pam_start("cron", usernm, &conv, &pamh);
++	PAM_FAIL_CHECK;
++	retcode = pam_acct_mgmt(pamh, PAM_SILENT);
++	PAM_FAIL_CHECK;
++	retcode = pam_open_session(pamh, PAM_SILENT);
++	PAM_FAIL_CHECK;
++	retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED | PAM_SILENT);
++	PAM_FAIL_CHECK;
++
+ 	/* fork again, this time so we can exec the user's command.
+ 	 */
+ 	switch (vfork()) {
+@@ -376,7 +414,7 @@
+ 				(void) gethostname(hostname, MAXHOSTNAMELEN);
+ 				(void) snprintf(mailcmd, MAX_COMMAND, MAILARGS,
+ 					       MAILCMD, mailto);
+-				if (!(mail = cron_popen(mailcmd, "w"))) {
++				if (!(mail = cron_popen(mailcmd, "w", e))) {
+ 					perror(MAILCMD);
+ 					(void) _exit(ERROR_EXIT);
+ 				}
+@@ -467,7 +505,11 @@
+ 		if (WIFSIGNALED(waiter) && WCOREDUMP(waiter))
+ 			Debug(DPROC, (", dumped core"))
+ 		Debug(DPROC, ("\n"))
++ 
+ 	}
++	pam_setcred(pamh, PAM_DELETE_CRED | PAM_SILENT);
++	retcode = pam_close_session(pamh, PAM_SILENT);
++	pam_end(pamh, retcode);
+ }
+ 
+ 
+diff -urN vixie-cron-3.0.1.org/Makefile vixie-cron-3.0.1/Makefile
+--- vixie-cron-3.0.1.org/Makefile	2003-12-27 22:58:34.299135392 +0100
++++ vixie-cron-3.0.1/Makefile	2003-12-27 22:59:10.474635880 +0100
+@@ -55,7 +55,7 @@
+ INCLUDE		=	-I.
+ #INCLUDE	=
+ #<<need getopt()>>
+-LIBS		=	-lpam
++LIBS		=	-lpam -lselinux
+ #<<optimize or debug?>>
+ OPTIM		=	$(RPM_OPT_FLAGS)
+ #OPTIM		=	-g
+@@ -71,7 +71,7 @@
+ #<<want to use a nonstandard CC?>>
+ #CC		=	vcc
+ #<<manifest defines>>
+-DEFS		=
++DEFS		= -DWITH_SELINUX
+ #(SGI IRIX systems need this)
+ #DEFS		=	-D_BSD_SIGNALS -Dconst=
+ #<<the name of the BSD-like install program>>
