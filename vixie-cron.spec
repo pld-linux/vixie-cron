@@ -37,7 +37,7 @@ Provides:	crontabs >= 1.7
 Obsoletes:	crontabs
 Provides:	crondaemon
 Requires:	/bin/run-parts
-Requires:	rc-scripts
+Prereq:		rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	crondaemon
 Obsoletes:	hc-cron
