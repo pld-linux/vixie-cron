@@ -5,67 +5,73 @@ Summary(pl):	Demon Vixie cron
 Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
 Name:		vixie-cron
 Version:	3.0.1
-Release:	44
+Release:	55
 Copyright:	distributable
 Group:		Daemons
 Group(pl):	Serwery
+Group(de):	Server
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
-Source1:	vixie-cron.init
+Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
-Source4:	vixie-cron.crontab
+Source4:	%{name}.crontab
 Source5:	crontab.1.pl
 Source6:	cron.8.pl
-Patch0:		vixie-cron-redhat.patch
-Patch1:		vixie-cron-security.patch
-Patch3:		vixie-cron-badsig.patch
-Patch4:		vixie-cron-crontab.patch
-Patch5:		vixie-cron-sigchld.patch
-Patch6:		vixie-cron-sprintf.patch
-Patch7:		vixie-cron-sigchld2.patch
-Patch8:		vixie-cron-crond.patch
-Patch9:		vixie-cron-dst.patch
-Patch10:	vixie-cron-0days.patch
-Patch11:	vixie-cron-security2.patch
-Patch12:	vixie-cron-DESTDIR.patch
+Patch0:		%{name}-redhat.patch
+Patch1:		%{name}-security.patch
+Patch3:		%{name}-badsig.patch
+Patch4:		%{name}-crontab.patch
+Patch5:		%{name}-sigchld.patch
+Patch6:		%{name}-sprintf.patch
+Patch7:		%{name}-sigchld2.patch
+Patch8:		%{name}-crond.patch
+Patch9:		%{name}-dst.patch
+Patch10:	%{name}-0days.patch
+Patch11:	%{name}-security2.patch
+Patch12:	%{name}-DESTDIR.patch
+Patch13:	%{name}-linux.patch
+Patch14:	%{name}-crontabloc.patch
+Patch15:	%{name}-nodot.patch
 Prereq:		/sbin/chkconfig
 Provides:	crontabs >= 1.7
 Obsoletes:	crontabs
 Provides:	crondaemon
-Obsoletes:	crondaemon
-Obsoletes:	hc-cron
 Requires:	/usr/bin/run-parts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+Obsoletes:	crondaemon
+Obsoletes:	hc-cron
+Obsoletes:	anacron
 
 %description
 The vixie-cron package contains the Vixie version of cron. Cron is a
-standard UNIX program that runs user-specified programs at
-periodic scheduled times. Vixie cron adds a number of features to the basic
+standard UNIX program that runs user-specified programs at periodic
+scheduled times. Vixie cron adds a number of features to the basic
 UNIX cron, including better security and more powerful configuration
 options.
 
 %description -l de
-cron ist ein Standard-UNIX-Programm, das zu vorgegebenen Zeiten vom Benutzer
-angegebene Programme ausführt. vixie cron weist mehr Funktionen auf als cron
-aus UNIX, u.a. bessere Sicherheit und leistungsfähigere
-Konfigurationsoptionen.
+cron ist ein Standard-UNIX-Programm, das zu vorgegebenen Zeiten vom
+Benutzer angegebene Programme ausführt. vixie cron weist mehr
+Funktionen auf als cron aus UNIX, u.a. bessere Sicherheit und
+leistungsfähigere Konfigurationsoptionen.
 
 %description -l fr
-cron est un des programmes UNIX standard qui permet à un utilisateur donné
-de lancer des périodiquement des programmes selon un ordre planifié. vixie
-cron ajoute de nombreuses fonctionnalités au cron UNIX de base, dont une
-plus grande sécurité et des options de configuration plus puissantes.
+cron est un des programmes UNIX standard qui permet à un utilisateur
+donné de lancer des périodiquement des programmes selon un ordre
+planifié. vixie cron ajoute de nombreuses fonctionnalités au cron UNIX
+de base, dont une plus grande sécurité et des options de configuration
+plus puissantes.
 
 %description -l pl
-cron to standardowy uniksowy program, który okresowo uruchamia okre¶lone
-przez u¿ytkowników programy. vixie cron dodaje mo¿liwo¶ci podstawowemu
-uniksowemu cronowi, w tym lepsze bezpieczeñstwo i bogatsze opcje
-konfiguracyjne.
+cron to standardowy uniksowy program, który okresowo uruchamia
+okre¶lone przez u¿ytkowników programy. vixie cron dodaje mo¿liwo¶ci
+podstawowemu uniksowemu cronowi, w tym lepsze bezpieczeñstwo i
+bogatsze opcje konfiguracyjne.
 
 %description -l tr
-cron UNIX'de standart olarak belirli zamanlarda bir programý çalýþtýrmak
-için kullanýlan daemon'dur. Vixie cron, standart cron'dan daha güvenlidir ve
-daha geliþmiþ yapýlandýrma seçenekleri içerir.
+cron UNIX'de standart olarak belirli zamanlarda bir programý
+çalýþtýrmak için kullanýlan daemon'dur. Vixie cron, standart cron'dan
+daha güvenlidir ve daha geliþmiþ yapýlandýrma seçenekleri içerir.
 
 %prep
 %setup -q
@@ -81,6 +87,9 @@ daha geliþmiþ yapýlandýrma seçenekleri içerir.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
+%patch13 -p1
+%patch14 -p1
+%patch15 -p1
 
 %build
 %{__make}
@@ -88,8 +97,8 @@ daha geliþmiþ yapýlandýrma seçenekleri içerir.
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}/pl/man{1,8}} \
-	$RPM_BUILD_ROOT/etc/{cron.d,rc.d/init.d,logrotate.d,sysconfig} \
-	$RPM_BUILD_ROOT/etc/cron.{hourly,daily,weekly,monthly}
+	$RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,sysconfig} \
+	$RPM_BUILD_ROOT%{_sysconfdir}/cron.{d,hourly,daily,weekly,monthly}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -132,7 +141,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%attr(0750,root,root) %dir /etc/cron.*
+%attr(0750,root,root) %dir %{_sysconfdir}/cron.*
 /etc/cron.d/crontab
 %attr(0754,root,root) /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
