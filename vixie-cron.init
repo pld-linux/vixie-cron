@@ -25,7 +25,7 @@ case "$1" in
   start)
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/crond ]; then
-		show Starting cron daemon
+		msg_starting "cron"
 		daemon crond
 	else
 		echo "Cron already is running"
@@ -33,7 +33,7 @@ case "$1" in
 	touch /var/lock/subsys/crond
 	;;
   stop)
-	show Stopping cron daemon
+	msg_stopping "cron"
 	killproc crond
 	rm -f /var/lock/subsys/crond
 	;;
