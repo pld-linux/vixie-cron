@@ -73,13 +73,13 @@ install -d $RPM_BUILD_ROOT/usr/{sbin,bin,man/man{1,5,8}} \
 
 install -s cron $RPM_BUILD_ROOT/usr/sbin/crond
 install -s crontab $RPM_BUILD_ROOT/usr/bin
-install crontab.1 $RPM_BUILD_ROOT/usr/man/man1
-install crontab.5 $RPM_BUILD_ROOT/usr/man/man5
-install cron.8 $RPM_BUILD_ROOT/usr/man/man8
+install crontab.1 $RPM_BUILD_ROOT%{_mandir}/man1
+install crontab.5 $RPM_BUILD_ROOT%{_mandir}/man5
+install cron.8 $RPM_BUILD_ROOT%{_mandir}/man8
 install $RPM_SOURCE_DIR/vixie-cron.init $RPM_BUILD_ROOT/etc/rc.d/init.d/crond
 install $RPM_SOURCE_DIR/cron.log $RPM_BUILD_ROOT/etc/logrotate.d/cron
 
-echo ".so cron.8" >$RPM_BUILD_ROOT/usr/man/man8/crond.8
+echo ".so cron.8" >$RPM_BUILD_ROOT%{_mandir}/man8/crond.8
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -99,7 +99,7 @@ fi
 %defattr(644, root, root, 755)
 %attr(0700, root, root) /usr/sbin/crond
 %attr(4755, root, root) /usr/bin/crontab
-%attr(0644, root,  man) /usr/man/man*/*
+%attr(0644, root,  man) %{_mandir}/man*/*
 %attr(0700, root, root) /var/spool/cron
 %dir /etc/crontab.d
 %attr(0744, root, root) %config /etc/rc.d/init.d/crond
