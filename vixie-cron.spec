@@ -29,7 +29,7 @@ Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
 Source4:	%{name}.crontab
-Source5:	%{name}-non-english-man-pages.tar.bz2
+Source5:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source5-md5:	8516dbf0641eb3035d43f18b7ca95c73
 Source6:	%{name}.pam
 Patch0:		%{name}-redhat.patch
