@@ -120,10 +120,12 @@ fi
 touch /var/log/cron
 chmod 600 /var/log/cron
 
-%postun
+%preun
 if [ "$1" = "0" ]; then
+	if [ -f /var/lock/subsys/crond ]; then
+		/etc/rc.d/init.d/crond stop >&2
+	fi
 	/sbin/chkconfig --del crond
-	/etc/rc.d/init.d/crond stop >&2
 fi
 
 %triggerpostun -- hc-cron
