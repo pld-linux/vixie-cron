@@ -1,0 +1,12 @@
+diff -urN vixie-cron-3.0.1.orig/compat.h vixie-cron-3.0.1/compat.h
+--- vixie-cron-3.0.1.orig/compat.h	Sun Apr 22 21:56:16 2001
++++ vixie-cron-3.0.1/compat.h	Sun Apr 22 22:01:48 2001
+@@ -112,7 +112,7 @@
+ 
+ # define USE_SIGCHLD
+ 
+-#if !defined(AIX) && !defined(UNICOS)
++#if !defined(AIX) && !defined(UNICOS) &&!defined(__linux__)
+ # define SYS_TIME_H 1
+ #else
+ # define SYS_TIME_H 0
