@@ -5,7 +5,7 @@
  5 4 * * sun     echo "run at 5 after 4 every sunday"
  .fi
 +.SH FILES
-+/etc/crontab			System crontab file
++/etc/cron/crontab			System crontab file
 +
  .SH SEE ALSO
  cron(8), crontab(1)
