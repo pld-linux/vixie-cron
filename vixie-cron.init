@@ -30,7 +30,7 @@ case "$1" in
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/crond
 	else
-		echo "Vixie cron already is running"
+		msg_already_running "Vixie cron"
 		exit 1
 	fi
 	;;
@@ -40,7 +40,7 @@ case "$1" in
 		killproc crond
 		rm -f /var/lock/subsys/crond
 	else
-		msg_Not_Running "Vixie cron"
+		msg_not_running "Vixie cron"
 		exit 1
 	fi
 	;;
@@ -58,7 +58,7 @@ case "$1" in
 		killproc crond -HUP
 		RETVAL=$?
 	else
-		msg_Not_Running "Vixie cron"
+		msg_not_running "Vixie cron"
 		exit 1
 	fi
 	;;
