@@ -1,0 +1,93 @@
+--- ./fi/man1/crontab.1.org	Sun Nov 14 02:34:31 1999
++++ ./fi/man1/crontab.1	Fri Feb 15 13:59:53 2002
+@@ -72,8 +72,8 @@
+ uusi taulukko asennetaan automaattisesti.
+ .SH TIEDOSTOT
+ .nf
+-/etc/cron.allow
+-/etc/cron.deny
++/etc/cron.d/cron.allow
++/etc/cron.d/cron.deny
+ .fi
+ .SH STANDARDIT
+ The
+--- ./fr/man1/crontab.1.org	Mon Sep 25 14:08:39 2000
++++ ./fr/man1/crontab.1	Fri Feb 15 14:00:39 2002
+@@ -88,8 +88,8 @@
+ crontab(5), cron(8)
+ .SH FICHIERS
+ .nf
+-/etc/cron.allow
+-/etc/cron.deny
++/etc/cron.d/cron.allow
++/etc/cron.d/cron.deny
+ .fi
+ .SH STANDARDS
+ La commande
+--- ./ko/man1/crontab.1.org	Sat Apr 22 14:59:02 2000
++++ ./ko/man1/crontab.1	Fri Feb 15 14:01:18 2002
+@@ -35,10 +35,10 @@
+ 이 파일들은 /var 디렉토리 안에 있게 된다. 
+ 하지만, 그 파일을 직접 편집할 수는 없다.
+ .PP
+-.I /etc/cron.allow
++.I /etc/cron.d/cron.allow
+ 파일이 있으면, 그 파일 안에 자신의 ID가 있어야 이 명령을 사용할 수 있으며, 
+ .I allow 파일이 없고, 
+-.I /etc/cron.deny
++.I /etc/cron.d/cron.deny
+ 파일이 있으면, 그 파일 안에 자신의 ID가 없어야 이 명령을 사용할 수 있다.
+ 이 두 파일이 없다면, site-dependent(?) 환경설정 인자에 따라, 
+ 시스템 관리자만 사용할 수 있거나, 아니면, 모든 사용자가 이 명령을 
+@@ -81,8 +81,8 @@
+ crontab(5), cron(8)
+ .SH 파일
+ .nf
+-/etc/cron.allow
+-/etc/cron.deny
++/etc/cron.d/cron.allow
++/etc/cron.d/cron.deny
+ .fi
+ .SH 표준
+ .I crontab
+--- ./pl/man1/crontab.1.org	Sat Feb 12 11:01:39 2000
++++ ./pl/man1/crontab.1	Fri Feb 15 14:01:54 2002
+@@ -89,8 +89,8 @@
+ crontab(5), cron(8)
+ .SH PLIKI
+ .nf
+-/etc/cron.allow
+-/etc/cron.deny
++/etc/cron.d/cron.allow
++/etc/cron.d/cron.deny
+ .fi
+ .SH STANDARDY
+ Polecenie
+--- ./pathnames.h.org	Fri Feb 15 13:36:42 2002
++++ ./pathnames.h	Fri Feb 15 13:41:06 2002
+@@ -47,9 +47,9 @@
+ 			 * LOG_FILE or SYSLOG is defined, we don't log.  If
+ 			 * both are defined, we log both ways.
+ 			 */
+-#define	ALLOW_FILE	"/etc/cron.allow"		/*-*/
+-#define DENY_FILE	"/etc/cron.deny"		/*-*/
+-#define LOG_FILE	"/var/log/cron"		/*-*/
++#define	ALLOW_FILE	"/etc/cron.d/cron.allow"	/*-*/
++#define DENY_FILE	"/etc/cron.d/cron.deny"		/*-*/
++#define LOG_FILE	"/var/log/cron"			/*-*/
+ 
+ 			/* where should the daemon stick its PID?
+ 			 */
+--- ./crontab.1.org	Fri Feb 15 13:36:42 2002
++++ ./crontab.1	Fri Feb 15 13:43:47 2002
+@@ -83,8 +83,8 @@
+ crontab(5), cron(8)
+ .SH FILES
+ .nf
+-/etc/cron.allow
+-/etc/cron.deny
++/etc/cron.d/cron.allow
++/etc/cron.d/cron.deny
+ .fi
+ .SH STANDARDS
+ The
