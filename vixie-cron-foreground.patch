@@ -1,0 +1,61 @@
+diff -dur vixie-cron-3.0.1.orig/cron.8 vixie-cron-3.0.1/cron.8
+--- vixie-cron-3.0.1.orig/cron.8	2004-02-04 18:52:42.000000000 +0100
++++ vixie-cron-3.0.1/cron.8	2004-02-04 18:56:05.301192530 +0100
+@@ -25,8 +25,8 @@
+ cron
+ .SH DESCRIPTION
+ .I Cron
+-should be started from /etc/rc or /etc/rc.local.  It will return immediately,
+-so you don't need to start it with '&'.
++should be started from /etc/rc or /etc/rc.local.  Unless you run it with -f option
++it will return immediately, so you don't need to start it with '&'.
+ .PP
+ .I Cron
+ searches /var/spool/cron for crontab files which are named after accounts in
+diff -dur vixie-cron-3.0.1.orig/cron.c vixie-cron-3.0.1/cron.c
+--- vixie-cron-3.0.1.orig/cron.c	2004-02-04 18:52:42.000000000 +0100
++++ vixie-cron-3.0.1/cron.c	2004-02-04 18:55:08.452093305 +0100
+@@ -32,6 +32,7 @@
+ # include <time.h>
+ #endif
+ 
++int foreground=0;
+ 
+ static	void	usage __P((void)),
+ 		run_reboot_jobs __P((cron_db *)),
+@@ -47,7 +48,7 @@
+ 
+ static void
+ usage() {
+-	fprintf(stderr, "usage:  %s [-x debugflag[,...]]\n", ProgramName);
++	fprintf(stderr, "usage:  %s [-f] [-x debugflag[,...]]\n", ProgramName);
+ 	exit(ERROR_EXIT);
+ }
+ 
+@@ -86,9 +87,9 @@
+ 	/* if there are no debug flags turned on, fork as a daemon should.
+ 	 */
+ # if DEBUGGING
+-	if (DebugFlags) {
++	if (DebugFlags||foreground) {
+ # else
+-	if (0) {
++	if (foreground) {
+ # endif
+ 		(void) fprintf(stderr, "[%d] cron started\n", getpid());
+ 	} else {
+@@ -293,10 +294,13 @@
+ {
+ 	int	argch;
+ 
+-	while (EOF != (argch = getopt(argc, argv, "x:"))) {
++	while (EOF != (argch = getopt(argc, argv, "fx:"))) {
+ 		switch (argch) {
+ 		default:
+ 			usage();
++		case 'f':
++			foreground=1;
++			break;
+ 		case 'x':
+ 			if (!set_debug_flags(optarg))
+ 				usage();
