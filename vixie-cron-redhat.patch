@@ -104,8 +104,8 @@
  .nf
 -/var/cron/allow
 -/var/cron/deny
-+/etc/cron.allow
-+/etc/cron.deny
++/etc/cron/cron.allow
++/etc/cron/cron.deny
  .fi
  .SH STANDARDS
  The
@@ -136,8 +136,8 @@
 -#define	ALLOW_FILE	"allow"		/*-*/
 -#define DENY_FILE	"deny"		/*-*/
 -#define LOG_FILE	"log"		/*-*/
-+#define	ALLOW_FILE	"/etc/cron.allow"		/*-*/
-+#define DENY_FILE	"/etc/cron.deny"		/*-*/
++#define	ALLOW_FILE	"/etc/cron/cron.allow"		/*-*/
++#define DENY_FILE	"/etc/cron/cron.deny"		/*-*/
 +#define LOG_FILE	"/var/log/cron"		/*-*/
  
  			/* where should the daemon stick its PID?

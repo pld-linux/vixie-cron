@@ -90,7 +90,7 @@
  /etc/passwd; crontabs found are loaded into memory.
  .I Cron
 -also searches for /etc/crontab which is in a different format (see
-+also searches for /etc/crontab and the files in the /etc/cron.d/ directory,
++also searches for /etc/cron.d/crontab and the files in the /etc/cron.d/ directory,
 +which are in a different format (see
  .IR crontab(5)).
  .I Cron
@@ -104,5 +104,5 @@
 +
 +--	If it exists, the /etc/cron.d/ directory is parsed like the cron
 +	spool directory, except that the files in it are not user-specific
-+	and are therefore read with /etc/crontab syntax (the user is
++	and are therefore read with /etc/cron.d/crontab syntax (the user is
 +	specified explicitly in the 6th column).
