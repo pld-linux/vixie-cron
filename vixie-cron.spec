@@ -20,7 +20,7 @@ Summary(uk):	Vixie cron  - ÄÅÍÏÎ, İÏ ÚÁĞÕÓËÁ¤ ĞÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ĞĞÖ¸¶¨³ÌĞòµÄ Vixie cron ºóÌ¨³ÌĞò¡£
 Name:		vixie-cron
 Version:	3.0.1
-Release:	83
+Release:	83.9
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
@@ -52,9 +52,8 @@ Patch17:	%{name}-newtime.patch
 Patch18:	%{name}-name.patch
 Patch19:	%{name}-security3.patch
 Patch20:	%{name}-noroot.patch
-Patch21:	%{name}-allow_location.patch
-Patch22:	%{name}-pam.patch
-Patch23:	%{name}-sgid-crontab.patch
+Patch21:	%{name}-pam.patch
+Patch22:	%{name}-sgid-crontab.patch
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -199,7 +198,6 @@ vixie-cron Èí¼ş°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
-%patch23 -p1
 
 %build
 %{__make} \
