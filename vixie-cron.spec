@@ -5,7 +5,7 @@ Summary(pl):	Demon Vixie cron
 Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
 Name:		vixie-cron
 Version:	3.0.1
-Release:	55
+Release:	56
 Copyright:	distributable
 Group:		Daemons
 Group(pl):	Serwery
@@ -36,7 +36,7 @@ Prereq:		/sbin/chkconfig
 Provides:	crontabs >= 1.7
 Obsoletes:	crontabs
 Provides:	crondaemon
-Requires:	/usr/bin/run-parts
+Requires:	/bin/run-parts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	crondaemon
 Obsoletes:	hc-cron
