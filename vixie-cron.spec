@@ -99,7 +99,7 @@ fi
 %defattr(644, root, root, 755)
 %attr(0700, root, root) /usr/sbin/crond
 %attr(4755, root, root) /usr/bin/crontab
-%attr(0644, root,  man) %{_mandir}/man*/*
+%{_mandir}/man*/*
 %attr(0700, root, root) /var/spool/cron
 %dir /etc/crontab.d
 %attr(0744, root, root) %config /etc/rc.d/init.d/crond
