@@ -20,7 +20,7 @@ Summary(uk):	Vixie cron  - демон, що запуска╓ процеси за розкладом
 Summary(zh_CN):	сцсзтзт╓иХй╠╪Дж╢ппж╦╤╗ЁлпР╣д Vixie cron ╨Сл╗ЁлпР║ё
 Name:		vixie-cron
 Version:	3.0.1
-Release:	81
+Release:	81.1
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
@@ -290,6 +290,10 @@ if [ "$1" = "0" ]; then
 	/usr/sbin/groupdel crontab
 fi
 
+%triggerpostun  -- vixie-cron <= 3.0.1-80
+chmod 660 /var/spool/cron/*
+chown crontab /var/spool/cron/*
+
 %triggerpostun -- vixie-cron <= 3.0.1-73
 if [ -f /etc/cron.d/cron.allow.rpmsave ]; then
 	mv -f /etc/cron.d/cron.allow.rpmsave /etc/cron/cron.allow
@@ -339,4 +343,4 @@ fi
 %lang(pl) %{_mandir}/pl/man*/*
 
 %attr(1730,root,crontab) /var/spool/cron
-%attr(0600,root,root) %ghost /var/log/cron
+%attr(0660,root,crontab) %ghost /var/log/cron
