@@ -20,7 +20,7 @@ Summary(uk):	Vixie cron  - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ÐÐÖ¸¶¨³ÌÐòµÄ Vixie cron ºóÌ¨³ÌÐò¡£
 Name:		vixie-cron
 Version:	3.0.1
-Release:	76
+Release:	77
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
@@ -52,6 +52,7 @@ Patch19:	%{name}-security3.patch
 Patch20:	%{name}-noroot.patch
 Patch21:	%{name}-allow_location.patch
 Patch22:	%{name}-pam.patch
+Patch23:	%{name}-no_backup.patch
 Provides:	crontabs >= 1.7
 Provides:	crondaemon
 Obsoletes:	crontabs
@@ -192,6 +193,7 @@ vixie-cron Èí¼þ°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
+%patch23 -p1
 
 %build
 %{__make} CC=%{__cc} RPM_OPT_FLAGS="%{rpmcflags}" LDFLAGS="%{rpmldflags}"
