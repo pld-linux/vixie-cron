@@ -61,6 +61,7 @@ Patch22:	%{name}-sgid-crontab.patch
 Patch23:	%{name}-selinux.patch
 Patch24:	%{name}-selinux-pld.patch
 Patch25:	%{name}-foreground.patch
+Patch26:	%{name}-gcc34.patch
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	pam-devel
 PreReq:		rc-scripts
@@ -209,6 +210,7 @@ vixie-cron 软件包包含 cron 的 Vixie 版本。Cron 是标准的 UNIX
 %{?with_selinux:%patch23 -p1}
 %{?with_selinux:%patch24 -p1}
 %patch25 -p1
+%patch26 -p1
 
 %build
 %{__make} \
