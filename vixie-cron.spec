@@ -1,4 +1,7 @@
-%bcond_without selinux # SELinux support
+#
+# Conditional build:
+%bcond_without	selinux		# without SELinux support
+#
 Summary:	The Vixie cron daemon for executing specified programs at set times
 Summary(cs):	Démon pro periodické spou¹tìní zadaných programù v nastaveném èase
 Summary(da):	Vixie cron-dæmon for kørsel af specificerede programmer ved bestemte tider
@@ -57,6 +60,8 @@ Patch21:	%{name}-pam.patch
 Patch22:	%{name}-sgid-crontab.patch
 Patch23:	%{name}-selinux.patch
 Patch24:	%{name}-selinux-pld.patch
+%{?with_selinux:BuildRequires:	libselinux-devel}
+BuildRequires:	pam-devel
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -70,8 +75,6 @@ Provides:	crondaemon
 Obsoletes:	crontabs
 Obsoletes:	crondaemon
 Obsoletes:	hc-cron
-BuildRequires:	pam-devel
-%{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -207,7 +210,7 @@ vixie-cron Èí¼þ°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 
 %build
 %{__make} \
-	CC=%{__cc} \
+	CC="%{__cc}" \
 	RPM_OPT_FLAGS="%{rpmcflags}" \
 	LDFLAGS="%{rpmldflags}"
 
