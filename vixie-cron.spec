@@ -13,6 +13,8 @@ Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
 Source1:	vixie-cron.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
+Source4:	run-parts
+Source5:	vixie-cron.crontab
 Patch0:		vixie-cron-redhat.patch
 Patch1:		vixie-cron-security.patch
 Patch3:		vixie-cron-badsig.patch
@@ -26,7 +28,11 @@ Patch10:	vixie-cron-0days.patch
 Patch11:	vixie-cron-security2.patch
 Patch12:	vixie-cron-DESTDIR.patch
 Prereq:		/sbin/chkconfig
-Conflicts:	hc-cron
+Provides:	crontabs
+Obsoletes:	crontabs
+Provides:	crondaemon
+Obsoletes:	crondaemon
+Obsoletes:	hc-cron
 Buildroot:	/tmp/%{name}-%{version}-root
 
 %description
@@ -80,7 +86,8 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT/var/spool/cron \
-	$RPM_BUILD_ROOT/etc/{cron.d,rc.d/init.d,logrotate.d,sysconfig}
+	$RPM_BUILD_ROOT/etc/{cron.d,rc.d/init.d,logrotate.d,sysconfig} \
+	$RPM_BUILD_ROOT/etc/cron.{hourly,daily,weekly,monthly}
 
 make install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -89,7 +96,9 @@ make install \
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/crond
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/cron
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/cron
-	
+install %{SOURCE4} $RPM_BUILD_ROOT%{_bindir}
+install %{SOURCE5} $RPM_BUILD_ROOT/etc/cron.d/crontab
+
 gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man?/*
 
 %clean
@@ -97,10 +106,18 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add crond
+if [ -f /var/lock/subsys/crond ]; then
+	/etc/rc.d/init.d/crond restart >&2
+else
+	echo "Run \"/etc/rc.d/init.d/crond start\" to start cron daemon."
+fi
+touch /var/log/cron
+chmod 600 /var/log/cron
 
 %postun
-if [ $1 = 0 ]; then 
-    /sbin/chkconfig --del crond
+if [ "$1" = "0" ]; then
+	/sbin/chkconfig --del crond
+	/etc/rc.d/init.d/crond stop >&2
 fi
 
 %triggerpostun -- hc-cron
@@ -108,10 +125,14 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%attr(0700,root,root) %{_sbindir}/crond
-%attr(4755,root,root) %{_bindir}/crontab
-%{_mandir}/man*/*
-%attr(0700,root,root) /var/spool/cron
-%attr(0750,root,root) %dir /etc/cron.d
+%attr(0750,root,root) %dir /etc/cron.*
+/etc/cron.d/crontab
 %attr(0744,root,root) %config /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
+%attr(0700,root,root) %{_sbindir}/crond
+%attr(4755,root,root) %{_bindir}/crontab
+%attr(0755,root,root) %{_bindir}/run-parts
+
+%{_mandir}/man*/*
+
+%attr(0700,root,root) /var/spool/cron
