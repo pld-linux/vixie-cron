@@ -52,7 +52,7 @@ case "$1" in
 	$0 start
 	;;
   reload)
-	if [ -f /var/lock/subsys/<service> ]; then
+	if [ -f /var/lock/subsys/crond ]; then
 		msg_show "Vixie cron"
 		msg_reload
 		busy
