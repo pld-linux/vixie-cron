@@ -25,15 +25,15 @@ case "$1" in
   start)
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/crond ]; then
-		msg_starting "cron"
+		msg_starting "Vixie cron"
 		daemon crond
 	else
-		echo "Cron already is running"
+		echo "Vixie cron already is running"
 	fi
 	touch /var/lock/subsys/crond
 	;;
   stop)
-	msg_stopping "cron"
+	msg_stopping "Vixie cron"
 	killproc crond
 	rm -f /var/lock/subsys/crond
 	;;
