@@ -40,7 +40,7 @@
  	new_db.head = new_db.tail = NULL;
  
  	if (syscron_stat.st_mtime) {
-@@ -90,6 +98,32 @@
+@@ -90,6 +98,41 @@
  				SYSCRONTAB, &syscron_stat,
  				&new_db, old_db);
  	}
@@ -53,6 +53,7 @@
 +	while (NULL != (dp = readdir(dir))) {
 +		char	fname[MAXNAMLEN+1],
 +			tabname[MAXNAMLEN+1];
++		int ln = strlen(dp->d_name[0]);
 +
 +		/* avoid file names beginning with ".".  this is good
 +		 * because we would otherwise waste two guaranteed calls
@@ -61,7 +62,15 @@
 +		 */
 +		if (dp->d_name[0] == '.')
 +			continue;
-+		/* ignore files starting with # and ending with ~ */
++
++		/* ignore files ending with ~ */
++		if (dp->d_name[ln-1] == '~')
++			continue;
++
++		/* ignore *.rpmnew and *.rpmsave files */
++		if ((ln > 7 && strstr(dp->d_name[ln-7], ".rpmnew") ||
++			(ln > 8 && strstr(dp->d_name[ln-8], ".rpmsave"))
++			continue;
 +
 +		(void) strcpy(fname, dp->d_name);
 +		snprintf(tabname, MAXNAMLEN+1, "/etc/cron.d/%s", fname);
