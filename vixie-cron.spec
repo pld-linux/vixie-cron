@@ -291,8 +291,8 @@ if [ "$1" = "0" ]; then
 fi
 
 %triggerpostun  -- vixie-cron <= 3.0.1-82
-/bin/chmod 660 /var/spool/cron/*
-/bin/chgrp crontab /var/spool/cron/*
+/bin/chmod 660 /var/spool/cron/* 2> /dev/null
+/bin/chgrp crontab /var/spool/cron/* 2> /dev/null
 /bin/chmod 660 /var/log/cron
 /bin/chgrp crontab /var/log/cron
 /bin/chmod 1770 /var/spool/cron
