@@ -54,7 +54,6 @@ Patch19:	%{name}-security3.patch
 Patch20:	%{name}-noroot.patch
 Patch21:	%{name}-allow_location.patch
 Patch22:	%{name}-pam.patch
-Patch23:	%{name}-no_backup.patch
 Provides:	crontabs >= 1.7
 Provides:	crondaemon
 Obsoletes:	crontabs
@@ -195,7 +194,6 @@ vixie-cron 软件包包含 cron 的 Vixie 版本。Cron 是标准的 UNIX
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
-%patch23 -p1
 
 %build
 %{__make} CC=%{__cc} RPM_OPT_FLAGS="%{rpmcflags}" LDFLAGS="%{rpmldflags}"
