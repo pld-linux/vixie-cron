@@ -53,13 +53,10 @@ case "$1" in
 	;;
   reload)
 	if [ -f /var/lock/subsys/crond ]; then
-		msg_show "Vixie cron"
-		msg_reload
+		msg_reloading
 		busy
 		killproc crond -HUP
 		RETVAL=$?
-		deltext
-		ok		
 	else
 		msg_Not_Running "Vixie cron"
 		exit 1
