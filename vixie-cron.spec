@@ -35,7 +35,7 @@ Obsoletes:	crontabs
 Provides:	crondaemon
 Obsoletes:	crondaemon
 Obsoletes:	hc-cron
-Buildroot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 The vixie-cron package contains the Vixie version of cron. Cron is a
