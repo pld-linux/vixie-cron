@@ -72,7 +72,7 @@ install -d $RPM_BUILD_ROOT/usr/{sbin,bin,man/man{1,5,8}} \
 	$RPM_BUILD_ROOT/etc/{crontab.d,rc.d/init.d,logrotate.d}
 
 install -s cron $RPM_BUILD_ROOT/usr/sbin/crond
-install -s crontab $RPM_BUILD_ROOT/usr/bin
+install -s crontab $RPM_BUILD_ROOT%{_bindir}
 install crontab.1 $RPM_BUILD_ROOT%{_mandir}/man1
 install crontab.5 $RPM_BUILD_ROOT%{_mandir}/man5
 install cron.8 $RPM_BUILD_ROOT%{_mandir}/man8
@@ -98,7 +98,7 @@ fi
 %files
 %defattr(644, root, root, 755)
 %attr(0700, root, root) /usr/sbin/crond
-%attr(4755, root, root) /usr/bin/crontab
+%attr(4755, root, root) %{_bindir}/crontab
 %{_mandir}/man*/*
 %attr(0700, root, root) /var/spool/cron
 %dir /etc/crontab.d
