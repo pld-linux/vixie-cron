@@ -85,7 +85,7 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/var/spool/cron \
+install -d $RPM_BUILD_ROOT/var/{log,spool/cron} \
 	$RPM_BUILD_ROOT/etc/{cron.d,rc.d/init.d,logrotate.d,sysconfig} \
 	$RPM_BUILD_ROOT/etc/cron.{hourly,daily,weekly,monthly}
 
@@ -98,6 +98,8 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/cron
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/cron
 install %{SOURCE4} $RPM_BUILD_ROOT%{_bindir}
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/cron.d/crontab
+
+touch $RPM_BUILD_ROOT/var/log/cron
 
 gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man?/*
 
@@ -129,10 +131,11 @@ fi
 /etc/cron.d/crontab
 %attr(0754,root,root) /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
-%attr(0700,root,root) %{_sbindir}/crond
+%attr(0755,root,root) %{_sbindir}/crond
 %attr(4755,root,root) %{_bindir}/crontab
 %attr(0755,root,root) %{_bindir}/run-parts
 
 %{_mandir}/man*/*
 
 %attr(0700,root,root) /var/spool/cron
+%attr(0600,root,root) %ghost /var/log/cron
