@@ -41,7 +41,6 @@ Requires:	rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 Obsoletes:	crondaemon
 Obsoletes:	hc-cron
-Obsoletes:	anacron
 
 %description
 The vixie-cron package contains the Vixie version of cron. Cron is a
