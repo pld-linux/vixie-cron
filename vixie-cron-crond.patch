@@ -53,7 +53,7 @@
 +	while (NULL != (dp = readdir(dir))) {
 +		char	fname[MAXNAMLEN+1],
 +			tabname[MAXNAMLEN+1];
-+		int ln = strlen(dp->d_name[0]);
++		int ln = strlen(dp->d_name);
 +
 +		/* avoid file names beginning with ".".  this is good
 +		 * because we would otherwise waste two guaranteed calls
@@ -68,8 +68,8 @@
 +			continue;
 +
 +		/* ignore *.rpmnew and *.rpmsave files */
-+		if ((ln > 7 && strstr(dp->d_name[ln-7], ".rpmnew") ||
-+			(ln > 8 && strstr(dp->d_name[ln-8], ".rpmsave"))
++		if ((ln > 7 && strstr(&dp->d_name[ln-7], ".rpmnew")) ||
++			(ln > 8 && strstr(&dp->d_name[ln-8], ".rpmsave")))
 +			continue;
 +
 +		(void) strcpy(fname, dp->d_name);
