@@ -1,11 +1,26 @@
-Summary:	Vixie cron daemon
-Summary(de):	Vixie cron daemon 
-Summary(fr):	Démon Vixie cron
-Summary(pl):	Demon Vixie cron
+Summary:	The Vixie cron daemon for executing specified programs at set times
+Summary(cs):	Démon pro periodické spou¹tìní zadanıch programù v nastaveném èase
+Summary(da):	Vixie cron-dæmon for kørsel af specificerede programmer ved bestemte tider
+Summary(de):	Der Vixie-cron-Dämon zum Ausführen von Programmen zu bestimmten Zeiten
+Summary(es):	Demonio Vixie cron para ejecutar programas a horas específicas
+Summary(fr):	Démon vixie cron pour l'exécution de programmes spécifiés à des moments déterminés
+Summary(id):	Vixie cron daemon untuk menjalankan program pada waktu yang ditentukan
+Summary(is):	Vixie cron púkinn keyrir skilgreind forrit á ákveğnum tímum
+Summary(it):	Vixie: demone di cron per eseguire programmi a orari prestabiliti
+Summary(ja):	ÀßÄê¤µ¤ì¤¿»ş´Ö¤ËÆÃÄê¤Î¥×¥í¥°¥é¥à¤ò¼Â¹Ô¤¹¤ë Vixie cron ¥Ç¡¼¥â¥ó
+Summary(no):	Vixie cron-daemon for kjøring av spesifiserte programmer ved bestemte tider
+Summary(pl):	Demon Vixie cron uruchamiaj±cy zadane programy w okre¶lonym czasie
+Summary(pt):	O 'daemon' cron Vixie para executar programas indicados em alturas definidas
+Summary(ru):	Vixie cron - ÄÅÍÏÎ, ÚÁĞÕÓËÁÀİÉÊ ĞÒÏÃÅÓÓÙ ĞÏ ÒÁÓĞÉÓÁÎÉÀ
+Summary(sk):	Vixie cron démon na spú¹»anie danıch programov v urèenı èas
+Summary(sl):	Stre¾nik Vixie cron za izvajanje programov ob doloèenih èasih
+Summary(sv):	Vixie-cron-demonen för att köra angivna program vid bestämda tider
 Summary(tr):	Vixie cron süreci, periyodik program çalıştırma yeteneği
+Summary(uk):	Vixie cron  - ÄÅÍÏÎ, İÏ ÚÁĞÕÓËÁ¤ ĞÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
+Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ĞĞÖ¸¶¨³ÌĞòµÄ Vixie cron ºóÌ¨³ÌĞò¡£
 Name:		vixie-cron
 Version:	3.0.1
-Release:	71
+Release:	72
 License:	distributable
 Group:		Daemons
 Group(cs):	Démoni
@@ -31,7 +46,6 @@ Source4:	%{name}.crontab
 Source5:	%{name}-non-english-man-pages.tar.bz2
 Patch0:		%{name}-redhat.patch
 Patch1:		%{name}-security.patch
-Patch2:		%{name}-pl_man.patch
 Patch3:		%{name}-badsig.patch
 Patch4:		%{name}-crontab.patch
 Patch5:		%{name}-sigchld.patch
@@ -69,11 +83,24 @@ scheduled times. Vixie cron adds a number of features to the basic
 UNIX cron, including better security and more powerful configuration
 options.
 
+%description -l cs
+Balíèek vixie-cron obsahuje Vixie verzi standardního démona cron. Cron
+je standardní unixovı program, kterı spou¹tí u¾ivatelem urèené
+programy v periodicky plánovanıch intervalech. Vixie cron pøiná¹í
+celou øadu funkcí do základního unixového cron vèetnì lep¹ího
+zabezpeèení a mocnìj¹ích konfiguraèních voleb.
+
 %description -l de
 cron ist ein Standard-UNIX-Programm, das zu vorgegebenen Zeiten vom
 Benutzer angegebene Programme ausführt. vixie cron weist mehr
 Funktionen auf als cron aus UNIX, u.a. bessere Sicherheit und
 leistungsfähigere Konfigurationsoptionen.
+
+%description -l es
+El paquete vixie-cron contiene la versión Vixie del cron. Cron es un
+demonio UNIX estandard para ejecutar programas a horas específicas.
+Vixie cron tiene mayor seguridad y más opciones de configuración que
+la version estandar.
 
 %description -l fr
 cron est un des programmes UNIX standard qui permet à un utilisateur
@@ -82,22 +109,81 @@ planifié. vixie cron ajoute de nombreuses fonctionnalités au cron UNIX
 de base, dont une plus grande sécurité et des options de configuration
 plus puissantes.
 
+%description -l id
+Package vixie-cron berisi cron versi Vixie. Cron adalah daemon standar
+UNIX yang menjalankan program pada waktu yang ditentukan. Vixie cron
+menambahkan keamanan yang lebih baik dan konfigurasi yang lebih baik
+dari cron versi standar.
+
+%description -l is
+Vixie-cron pakkinn hefur ağ geyma Vixie útgáfuna af cron. Cron er
+stağlağur UNIX púki sem keyrir tilgreind forrit á fyrirfram tilteknum
+tíma. Vixie cron bætir auknu öryggi og öflugri stillingarmöguleikum
+viğ stöğluğu útgáfu cron.
+
+%description -l it
+Il pacchetto vixie-cron contiene la versione Vixie del programma cron.
+Cron è un demone UNIX standard per eseguire programmi specifici a
+orari prestabiliti. Vixie-cron aggiunge maggiore sicurezza e opzioni
+di configurazione più potenti rispetto alla versione standard di cron.
+
+%description -l ja
+vixie-cron ¥Ñ¥Ã¥±¡¼¥¸¤Ë¤Ï Vixie ¥Ğ¡¼¥¸¥ç¥ó¤Î cron ¤¬Æş¤Ã¤Æ¤¤¤Ş¤¹¡£cron
+¤Ï¡¢¥¹¥±¥¸¥å¡¼¥ë¤µ¤ì¤¿ »ş´Ö¤ËÆÃÄê¤Î¥×¥í¥°¥é¥à¤ò¼Â¹Ô¤¹¤ëÉ¸½à UNIX
+¥Ç¡¼¥â¥ó¤Ç¤¹¡£ vixie-cron ¤Ç¤Ï¡¢É¸½à¥Ğ¡¼¥¸¥ç¥ó¤Î cron
+¤Î¥»¥­¥å¥ê¥Æ¥£µ¡Ç½¤¬²şÁ±¤µ¤ì¡¢¤Ş¤¿¡¢
+¤è¤ê¶¯ÎÏ¤ÊÀßÄê¥ª¥×¥·¥ç¥ó¤¬ÄÉ²Ã¤µ¤ì¤Æ¤¤¤Ş¤¹¡£
+
 %description -l pl
 cron to standardowy uniksowy program, który okresowo uruchamia
 okre¶lone przez u¿ytkowników programy. vixie cron dodaje mo¿liwo¶ci
 podstawowemu uniksowemu cronowi, w tym lepsze bezpieczeñstwo i
 bogatsze opcje konfiguracyjne.
 
+%description -l pt
+O pacote vixie-cron contém a versão Vixie do cron. O cron é um
+'daemon' 'standard' do UNIX que corre programas especificados em horas
+escalonadas. O cron Vixie acrescenta melhor segurança e opções de
+configuração mais poderosas à versão 'standard' do cron.
+
+%description -l ru
+cron - ÜÔÏ ÓÔÁÎÄÁÒÔÎÁÑ ÄÌÑ UNIX ĞÒÏÇÒÁÍÍÁ, ÚÁĞÕÓËÁÀİÁÑ ÚÁÄÁÎÎÙÅ
+ĞÏÌØÚÏ×ÁÔÅÌÅÍ ĞÒÏÇÒÁÍÍÙ ĞÏ ÒÁÓĞÉÓÁÎÉÀ. Vixie cron ÄÏÂÁ×ÌÑÅÔ Ë
+ÓÔÁÎÄÁÒÔÎÏÍÕ UNIX cron'Õ ÎÏ×ÙÅ ÏĞÃÉÉ, ×ËÌÀŞÁÑ ÕÓÉÌÅÎÎÕÀ ÂÅÚÏĞÁÓÎÏÓÔØ É
+ÂÏÌÅÅ ÍÏİÎÙÅ ÏĞÃÉÉ ËÏÎÆÉÇÕÒÁÃÉÉ.
+
+%description -l sk
+Balík vixie-cron je obsahuje Vixie verziu cronu. Cron je ¹tandardnı
+démon v UNIXe, ktorı spú¹»a zadanı program v danı èas. Vixie cron
+pridáva vy¹¹iu bezpeènos» a lep¹ie mo¾nosti konfigurovania oproti
+¹tandardnej verzii cronu.
+
+%description -l sv
+Paketet vixie-cron innehåller Vixie-versionen av cron. Cron är en
+standarddemon under UNIX som kör angivna program vid bestämta tider.
+Vixie cron lägger till utökad säkerhet och kraftfullare
+konfigurationsval till standardversionen av cron.
+
 %description -l tr
 cron UNIX'de standart olarak belirli zamanlarda bir programı
 çalıştırmak için kullanılan daemon'dur. Vixie cron, standart cron'dan
 daha güvenlidir ve daha gelişmiş yapılandırma seçenekleri içerir.
 
+%description -l uk
+cron - ÃÅ ÓÔÁÎÄÁÒÔÎÁ ÄÌÑ UNIX ĞÒÏÇÒÁÍÁ, İÏ ÚÁĞÕÓËÁ¤ ÚÁÄÁÎ¦
+ËÏÒÉÓÔÕ×ÁŞÅÍ ĞÒÏÇÒÁÍÉ ÚÁ ÒÏÚËÌÁÄÏÍ. Vixie cron ÄÏÄÁ¤ ÄÏ ÓÔÁÎÄÁÒÔÎÏÇÏ
+UNIX cron'Õ ÎÏ×¦ ÏĞÃ¦§, ×ËÌÀŞÁÀŞÉ Â¦ÌØÛÕ ÚÁÈÉİÅÎ¦ÓÔØ ÔÁ Â¦ÌØÛ ĞÏÔÕÖÎ¦
+ÏĞÃ¦§ ËÏÎÆ¦ÇÕÒÁÃ¦§.
+
+%description -l zh_CN
+vixie-cron Èí¼ş°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
+ºóÌ¨³ÌĞò£¬ ÓÃÓÚÔÚÔ¤¶¨µÄÊ±¼äÔËĞĞÖ¸¶¨µÄ³ÌĞò¡£ Óë cron
+±ê×¼°æ±¾Ïà±È£¬Vixie cron ¾ßÓĞ¸ü¸ßµÄ°²È«ĞÔºÍ¹¦ÄÜ¸üÇ¿µÄÅäÖÃÑ¡Ïî¡£
+
 %prep
 %setup -q -a5
 %patch0 -p1
 %patch1 -p1
-%patch2 -p0
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
