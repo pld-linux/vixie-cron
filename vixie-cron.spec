@@ -5,7 +5,7 @@ Summary(pl):	Demon Vixie cron
 Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
 Name:		vixie-cron
 Version:	3.0.1
-Release:	40
+Release:	41
 Copyright:	distributable
 Group:		Daemons
 Group(pl):	Serwery
@@ -15,8 +15,8 @@ Source2:	cron.logrotate
 Source3:	cron.sysconfig
 Source4:	run-parts
 Source5:	vixie-cron.crontab
-Source5:	crontab.1.pl
-Source6:	cron.8.pl
+Source6:	crontab.1.pl
+Source7:	cron.8.pl
 Patch0:		vixie-cron-redhat.patch
 Patch1:		vixie-cron-security.patch
 Patch3:		vixie-cron-badsig.patch
@@ -100,8 +100,8 @@ install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/cron
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/cron
 install %{SOURCE4} $RPM_BUILD_ROOT%{_bindir}
 install %{SOURCE5} $RPM_BUILD_ROOT/etc/cron.d/crontab
-install %{SOURCE5} $RPM_BUILD_ROOT%{_mandir}/pl/man1/crontab.1
-install %{SOURCE6} $RPM_BUILD_ROOT%{_mandir}/pl/man8/cron.8
+install %{SOURCE6} $RPM_BUILD_ROOT%{_mandir}/pl/man1/crontab.1
+install %{SOURCE7} $RPM_BUILD_ROOT%{_mandir}/pl/man8/cron.8
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
