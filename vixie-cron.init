@@ -17,7 +17,7 @@
 . /etc/rc.d/init.d/functions
 
 # Get service config
-[ -f /etc/sysconfig/hc-cron ] && . /etc/sysconfig/cron
+[ -f /etc/sysconfig/cron ] && . /etc/sysconfig/cron
 
 
 # See how we were called.
