@@ -5,7 +5,7 @@ Summary(pl): Demon Vixie cron
 Summary(tr): Vixie cron süreci, periyodik program çalýþtýrma yeteneði
 Name:        vixie-cron
 Version:     3.0.1
-Release:     27
+Release:     28
 Copyright:   distributable
 Group:       Daemons
 Source0:     ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
@@ -92,6 +92,9 @@ if [ $1 = 0 ]; then
     /sbin/chkconfig --del crond
 fi
 
+%triggerpostun -- hc-cron
+/sbin/chkconfig --add crond
+
 %files
 %defattr(644, root, root, 755)
 %attr(0700, root, root) /usr/sbin/crond
@@ -103,6 +106,11 @@ fi
 %config /etc/logrotate.d/cron
 
 %changelog
+* Thu Nov 12 1998 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
+  [3.0.1-28]
+- added %triggerpostun -- hc-cron section (now vixie-cron is full
+  alternative for hc-cron).
+
 * Mon Sep 28 1998 Marcin 'Qrczak' Kowalczyk <qrczak@knm.org.pl>
   [3.0.1-27]
 - use %{name} and %{version} macros,
