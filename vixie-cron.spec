@@ -91,7 +91,7 @@ install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}/pl/man{1,8}} \
 	$RPM_BUILD_ROOT/etc/{cron.d,rc.d/init.d,logrotate.d,sysconfig} \
 	$RPM_BUILD_ROOT/etc/cron.{hourly,daily,weekly,monthly}
 
-make install \
+%{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
 	DESTMAN=$RPM_BUILD_ROOT%{_mandir}
 
