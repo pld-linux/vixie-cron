@@ -1,0 +1,33 @@
+--- vixie-cron-3.0.1/crontab.c~	Wed May 31 15:38:25 1995
++++ vixie-cron-3.0.1/crontab.c	Tue May  8 16:30:09 2001
+@@ -294,7 +294,7 @@
+ edit_cmd() {
+ 	char		n[MAX_FNAME], q[MAX_TEMPSTR], *editor;
+ 	FILE		*f;
+-	int		ch, t, x;
++	int		ch, t, x, saved_uid;
+ 	struct stat	statbuf;
+ 	time_t		mtime;
+ 	WAIT_T		waiter;
+@@ -362,6 +362,12 @@
+ 		perror(Filename);
+ 		exit(ERROR_EXIT);
+ 	}
++	/* Do not move this statement! */
++	saved_uid = getuid();
++	if (saved_uid < 0) {
++		perror("getuid");
++		exit(ERROR_EXIT);
++	}
+  again:
+ 	rewind(NewCrontab);
+ 	if (ferror(NewCrontab)) {
+@@ -396,7 +402,7 @@
+ 		goto fatal;
+ 	case 0:
+ 		/* child */
+-		if (setuid(getuid()) < 0) {
++		if (setuid(saved_uid) < 0) {
+ 			perror("setuid(getuid())");
+ 			exit(ERROR_EXIT);
+ 		}
