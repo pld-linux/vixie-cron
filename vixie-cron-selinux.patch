@@ -1,4 +1,37 @@
-diff -urN vixie-cron-3.0.1.org/cron.c vixie-cron-3.0.1/cron.c
+--- vixie-cron-3.0.1.org/do_command.c	2003-12-27 22:58:34.094166552 +0100
++++ vixie-cron-3.0.1/do_command.c	2003-12-27 22:58:43.797691392 +0100
+@@ -19,6 +19,9 @@
+ static char rcsid[] = "$Id$";
+ #endif
+ 
++#ifdef WITH_SELINUX
++#include <selinux/selinux.h>
++#endif
+ 
+ #include "cron.h"
+ #include <sys/signal.h>
+@@ -273,6 +276,20 @@
+ 			 */
+ 			(void) signal(SIGCHLD, SIG_DFL);
+ #endif
++#ifdef WITH_SELINUX
++			if (is_selinux_enabled()>0) {
++			  security_context_t scontext;
++			  if (get_default_context(u->name, NULL, &scontext)) {
++			    fprintf(stderr, "execle: couldn't get security context for user %s\n", u->name); 
++			    _exit(ERROR_EXIT);
++			  }
++			  if (setexeccon(scontext) < 0) {
++			    fprintf(stderr, "Could not set exec context to %s for user  %s\n", scontext,u->name);
++			    _exit(ERROR_EXIT);
++			  }
++			  freecon(scontext);
++			}
++#endif
+ 			execle(shell, shell, "-c", e->cmd, (char *)0, e->envp);
+ 			fprintf(stderr, "execl: couldn't exec `%s'\n", shell);
+ 			perror("execl");
+
 --- vixie-cron-3.0.1.org/cron.c	2003-12-27 22:58:34.264140712 +0100
 +++ vixie-cron-3.0.1/cron.c	2003-12-27 22:58:43.799691088 +0100
 @@ -100,7 +100,7 @@
@@ -10,7 +43,26 @@ diff -urN vixie-cron-3.0.1.org/cron.c vixie-cron-3.0.1/cron.c
  			break;
  		default:
  			/* parent process should just die */
-diff -urN vixie-cron-3.0.1.org/database.c vixie-cron-3.0.1/database.c
+--- vixie-cron-3.0.1.org/Makefile	2003-12-27 22:58:34.299135392 +0100
++++ vixie-cron-3.0.1/Makefile	2003-12-27 22:59:10.474635880 +0100
+@@ -55,7 +55,7 @@
+ INCLUDE		=	-I.
+ #INCLUDE	=
+ #<<need getopt()>>
+-LIBS		=	-lpam
++LIBS		=	-lpam -lselinux
+ #<<optimize or debug?>>
+ OPTIM		=	$(RPM_OPT_FLAGS)
+ #OPTIM		=	-g
+@@ -71,7 +71,7 @@
+ #<<want to use a nonstandard CC?>>
+ #CC		=	vcc
+ #<<manifest defines>>
+-DEFS		=
++DEFS		= -DWITH_SELINUX
+ #(SGI IRIX systems need this)
+ #DEFS		=	-D_BSD_SIGNALS -Dconst=
+ #<<the name of the BSD-like install program>>
 --- vixie-cron-3.0.1.org/database.c	2003-12-27 22:58:34.156157128 +0100
 +++ vixie-cron-3.0.1/database.c	2003-12-27 22:58:43.795691696 +0100
 @@ -30,6 +30,15 @@
@@ -56,12 +108,12 @@ diff -urN vixie-cron-3.0.1.org/database.c vixie-cron-3.0.1/database.c
  		/* file doesn't have a user in passwd file.
  		 */
  		log_it(fname, getpid(), "ORPHAN", "no passwd entry");
-@@ -333,6 +342,43 @@
+@@ -333,6 +342,44 @@
  		free_user(u);
  		log_it(fname, getpid(), "RELOAD", tabname);
  	}
 +#ifdef WITH_SELINUX
-+	if (is_selinux_enabled())	{
++	if (is_selinux_enabled()>0)	{
 +	  security_context_t  file_context=NULL;
 +	  security_context_t   user_context=NULL;
 +	  struct av_decision avd;
@@ -93,66 +145,11 @@ diff -urN vixie-cron-3.0.1.org/database.c vixie-cron-3.0.1/database.c
 +	  freecon(file_context);
 +	  if (retval || ((FILE__ENTRYPOINT & avd.allowed) != FILE__ENTRYPOINT)) {
 +	    log_it(fname, getpid(), "ENTRYPOINT FAILED", tabname);
-+	    goto next_crontab;
++	    if (security_getenforce()==1)
++	      goto next_crontab;
 +	  }
 +	}
 +#endif
  	u = load_user(crontab_fd, pw, fname);
  	if (u != NULL) {
  		u->mtime = statbuf->st_mtime;
-diff -urN vixie-cron-3.0.1.org/do_command.c vixie-cron-3.0.1/do_command.c
---- vixie-cron-3.0.1.org/do_command.c	2003-12-27 22:58:34.094166552 +0100
-+++ vixie-cron-3.0.1/do_command.c	2003-12-27 22:58:43.797691392 +0100
-@@ -19,6 +19,9 @@
- static char rcsid[] = "$Id$";
- #endif
- 
-+#ifdef WITH_SELINUX
-+#include <selinux/selinux.h>
-+#endif
- 
- #include "cron.h"
- #include <sys/signal.h>
-@@ -273,6 +276,20 @@
- 			 */
- 			(void) signal(SIGCHLD, SIG_DFL);
- #endif
-+#ifdef WITH_SELINUX
-+			if (is_selinux_enabled()) {
-+			  security_context_t scontext;
-+			  if (get_default_context(u->name, NULL, &scontext)) {
-+			    fprintf(stderr, "execle: couldn't get security context for user %s\n", u->name); 
-+			    _exit(ERROR_EXIT);
-+			  }
-+			  if (setexeccon(scontext) < 0) {
-+			    fprintf(stderr, "Could not set exec context to %s for user  %s\n", scontext,u->name);
-+			    _exit(ERROR_EXIT);
-+			  }
-+			  freecon(scontext);
-+			}
-+#endif
- 			execle(shell, shell, "-c", e->cmd, (char *)0, e->envp);
- 			fprintf(stderr, "execl: couldn't exec `%s'\n", shell);
- 			perror("execl");
-
-diff -urN vixie-cron-3.0.1.org/Makefile vixie-cron-3.0.1/Makefile
---- vixie-cron-3.0.1.org/Makefile	2003-12-27 22:58:34.299135392 +0100
-+++ vixie-cron-3.0.1/Makefile	2003-12-27 22:59:10.474635880 +0100
-@@ -55,7 +55,7 @@
- INCLUDE		=	-I.
- #INCLUDE	=
- #<<need getopt()>>
--LIBS		=	-lpam
-+LIBS		=	-lpam -lselinux
- #<<optimize or debug?>>
- OPTIM		=	$(RPM_OPT_FLAGS)
- #OPTIM		=	-g
-@@ -71,7 +71,7 @@
- #<<want to use a nonstandard CC?>>
- #CC		=	vcc
- #<<manifest defines>>
--DEFS		=
-+DEFS		= -DWITH_SELINUX
- #(SGI IRIX systems need this)
- #DEFS		=	-D_BSD_SIGNALS -Dconst=
- #<<the name of the BSD-like install program>>
