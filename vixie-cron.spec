@@ -52,7 +52,7 @@ Patch19:	%{name}-security3.patch
 Patch20:	%{name}-noroot.patch
 Patch21:	%{name}-allow_location.patch
 Patch22:	%{name}-pam.patch
-Patch23:       %{name}-no_backup.patch
+Patch23:	%{name}-no_backup.patch
 Provides:	crontabs >= 1.7
 Provides:	crondaemon
 Obsoletes:	crontabs
