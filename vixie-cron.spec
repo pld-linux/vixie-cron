@@ -196,7 +196,7 @@ vixie-cron 软件包包含 cron 的 Vixie 版本。Cron 是标准的 UNIX
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{/var/{log,spool/cron},%{_mandir}} \
 	$RPM_BUILD_ROOT/etc/{rc.d/init.d,logrotate.d,sysconfig} \
-	$RPM_BUILD_ROOT%{_sysconfdir}/cron.{d,hourly,daily,weekly,monthly}
+	$RPM_BUILD_ROOT%{_sysconfdir}/{cron,cron.{d,hourly,daily,weekly,monthly}}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT \
@@ -225,13 +225,13 @@ done
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
-cat > $RPM_BUILD_ROOT/etc/cron.d/cron.allow << EOF
+cat > $RPM_BUILD_ROOT/etc/cron/cron.allow << EOF
 # hosts.allow   This file describes the names of the users which are
 #               allowed to use the local cron daemon
 root
 EOF
 
-cat > $RPM_BUILD_ROOT/etc/cron.d/cron.deny << EOF2
+cat > $RPM_BUILD_ROOT/etc/cron/cron.deny << EOF2
 # hosts.deny    This file describes the names of the users which are
 #               NOT allowed to use the local cron daemon
 EOF2
@@ -263,10 +263,10 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%attr(0750,root,root) %dir %{_sysconfdir}/cron.*
+%attr(0750,root,root) %dir %{_sysconfdir}/cron*
 %attr(0644,root,root) %config(noreplace) /etc/cron.d/crontab
-%attr(0644,root,root) %config(noreplace,missingok) %verify(not md5 mtime size) /etc/cron.d/cron.allow
-%attr(0644,root,root) %config(noreplace,missingok) %verify(not md5 mtime size) /etc/cron.d/cron.deny
+%attr(0644,root,root) %config(noreplace,missingok) %verify(not md5 mtime size) /etc/cron/cron.allow
+%attr(0644,root,root) %config(noreplace,missingok) %verify(not md5 mtime size) /etc/cron/cron.deny
 %attr(0754,root,root) /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
 %attr(0755,root,root) %{_sbindir}/crond
