@@ -5,11 +5,24 @@ Summary(pl):	Demon Vixie cron
 Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
 Name:		vixie-cron
 Version:	3.0.1
-Release:	70
+Release:	71
 License:	distributable
 Group:		Daemons
+Group(cs):	Démoni
+Group(da):	Dæmoner
 Group(de):	Server
+Group(es):	Servidores
+Group(fr):	Serveurs
+Group(is):	Púkar
+Group(it):	Demoni
+Group(ja):	¥Ç¡¼¥â¥ó
+Group(no):	Daemoner
 Group(pl):	Serwery
+Group(pt):	Servidores
+Group(ru):	äÅÍÏÎÙ
+Group(sl):	Stre¾niki
+Group(sv):	Demoner
+Group(uk):	äÅÍÏÎÉ
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	cron.logrotate
@@ -37,6 +50,7 @@ Patch17:	%{name}-newtime.patch
 Patch18:	%{name}-name.patch
 Patch19:	%{name}-security3.patch
 Patch20:	%{name}-noroot.patch
+Patch21:	%{name}-allow_location.patch
 Provides:	crontabs >= 1.7
 Provides:	crondaemon
 Obsoletes:	crontabs
@@ -102,6 +116,7 @@ daha güvenlidir ve daha geliþmiþ yapýlandýrma seçenekleri içerir.
 %patch18 -p1
 %patch19 -p1
 %patch20 -p1
+%patch21 -p1
 
 %build
 %{__make} CC=%{__cc} RPM_OPT_FLAGS="%{rpmcflags}" LDFLAGS="%{rpmldflags}"
@@ -139,6 +154,17 @@ done
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
+cat > $RPM_BUILD_ROOT/etc/cron.d/cron.allow << EOF
+# hosts.allow   This file describes the names of the users which are
+#               allowed to use the local cron daemon
+root
+EOF
+
+cat > $RPM_BUILD_ROOT/etc/cron.d/cron.deny << EOF2
+# hosts.deny    This file describes the names of the users which are
+#               NOT allowed to use the local cron daemon
+EOF2
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -168,6 +194,8 @@ fi
 %defattr(644,root,root,755)
 %attr(0750,root,root) %dir %{_sysconfdir}/cron.*
 %attr(0644,root,root) %config(noreplace) /etc/cron.d/crontab
+%attr(0644,root,root) %config(noreplace,missingok) %verify(not md5 mtime size) /etc/cron.d/cron.allow
+%attr(0644,root,root) %config(noreplace,missingok) %verify(not md5 mtime size) /etc/cron.d/cron.deny
 %attr(0754,root,root) /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
 %attr(0755,root,root) %{_sbindir}/crond
