@@ -12,7 +12,7 @@ Summary(id):	Vixie cron daemon untuk menjalankan program pada waktu yang ditentu
 Summary(is):	Vixie cron púkinn keyrir skilgreind forrit á ákveğnum tímum
 Summary(it):	Vixie: demone di cron per eseguire programmi a orari prestabiliti
 Summary(ja):	ÀßÄê¤µ¤ì¤¿»ş´Ö¤ËÆÃÄê¤Î¥×¥í¥°¥é¥à¤ò¼Â¹Ô¤¹¤ë Vixie cron ¥Ç¡¼¥â¥ó
-Summary(no):	Vixie cron-daemon for kjøring av spesifiserte programmer ved bestemte tider
+Summary(nb):	Vixie cron-daemon for kjøring av spesifiserte programmer ved bestemte tider
 Summary(pl):	Demon Vixie cron uruchamiaj±cy zadane programy w okre¶lonym czasie
 Summary(pt):	O 'daemon' cron Vixie para executar programas indicados em alturas definidas
 Summary(ru):	Vixie cron - ÄÅÍÏÎ, ÚÁĞÕÓËÁÀİÉÊ ĞÒÏÃÅÓÓÙ ĞÏ ÒÁÓĞÉÓÁÎÉÀ
