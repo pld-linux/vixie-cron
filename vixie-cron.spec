@@ -349,7 +349,7 @@ done
 %defattr(644,root,root,755)
 %doc CHANGES CONVERSION FEATURES MAIL README THANKS
 %attr(0750,root,crontab) %dir %{_sysconfdir}/cron*
-%attr(0644,root,crontab) %config(noreplace) /etc/cron.d/crontab
+%attr(0640,root,crontab) %config(noreplace) /etc/cron.d/crontab
 %attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
 %attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
 %attr(0640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
