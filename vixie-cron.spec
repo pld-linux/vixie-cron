@@ -20,7 +20,7 @@ Summary(uk):	Vixie cron  - демон, що запуска╓ процеси за розкладом
 Summary(zh_CN):	сцсзтзт╓иХй╠╪Дж╢ппж╦╤╗ЁлпР╣д Vixie cron ╨Сл╗ЁлпР║ё
 Name:		vixie-cron
 Version:	3.0.1
-Release:	84
+Release:	85
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
@@ -271,8 +271,10 @@ if [ -f /var/lock/subsys/crond ]; then
 else
 	echo "Run \"/etc/rc.d/init.d/crond start\" to start cron daemon."
 fi
+umask 027
 touch /var/log/cron
-chmod 600 /var/log/cron
+chgrp crontab /var/log/cron
+chmod 660 /var/log/cron
 
 %preun
 if [ "$1" = "0" ]; then
@@ -288,17 +290,14 @@ if [ "$1" = "0" ]; then
 	/usr/sbin/groupdel crontab
 fi
 
-%triggerpostun  -- vixie-cron <= 3.0.1-82
-cd /var/spool/cron
-for i in `ls /var/spool/cron/*`
+%triggerpostun -- vixie-cron <= 3.0.1-82
+for i in `/bin/ls /var/spool/cron 2>/dev/null`
 do
-	chown ${i} /var/spool/cron/${i}
+	chown ${i} /var/spool/cron/${i} 2>/dev/null || :
 done
 /bin/chmod 660 /var/log/cron
 /bin/chgrp crontab /var/log/cron
-/bin/chmod 1770 /var/spool/cron
-/bin/chgrp crontab /var/spool/cron
-/bin/chmod 660 /etc/cron/cron.*
+/bin/chmod 640 /etc/cron/cron.*
 /bin/chgrp crontab /etc/cron/cron.*
 
 %triggerpostun -- vixie-cron <= 3.0.1-73
@@ -332,9 +331,9 @@ fi
 %doc CHANGES CONVERSION FEATURES MAIL README THANKS
 %attr(0750,root,crontab) %dir %{_sysconfdir}/cron*
 %attr(0644,root,crontab) %config(noreplace) /etc/cron.d/crontab
-%attr(0644,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
-%attr(0644,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
-%attr(0644,root,crontab) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
+%attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
+%attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
+%attr(0640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
 %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/cron
 %attr(0754,root,root) /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
