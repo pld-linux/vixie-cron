@@ -26,7 +26,7 @@ case "$1" in
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/crond ]; then
 		msg_starting "Vixie cron"
-		daemon crond
+		daemon crond </dev/null
 		RETVAL=$?
 		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/crond
 	else
