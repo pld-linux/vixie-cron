@@ -20,7 +20,7 @@ Summary(uk):	Vixie cron  - демон, що запуска╓ процеси за розкладом
 Summary(zh_CN):	сцсзтзт╓иХй╠╪Дж╢ппж╦╤╗ЁлпР╣д Vixie cron ╨Сл╗ЁлпР║ё
 Name:		vixie-cron
 Version:	3.0.1
-Release:	74
+Release:	75
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
@@ -258,11 +258,25 @@ if [ "$1" = "0" ]; then
 fi
 
 %triggerpostun -- vixie-cron <= 3.0.1-73
-if [ -f /etc/cron.d/cron.allow* ]; then
-	mv -f /etc/cron.d/cron.allow* /etc/cron/cron.deny
+if [ -f /etc/cron.d/cron.allow.rpmsave ]; then
+	mv -f /etc/cron.d/cron.allow.rpmsave /etc/cron/cron.allow
 fi
-if [ -f /etc/cron.d/cron.deny* ]; then
-	mv -f /etc/cron.d/cron.deny* /etc/cron/cron.deny
+if [ -f /etc/cron.d/cron.allow ]; then
+	mv -f /etc/cron.d/cron.allow /etc/cron/cron.allow
+fi
+if [ -f /etc/cron.d/cron.deny.rpmsave ]; then
+	mv -f /etc/cron.d/cron.deny.rpmsave /etc/cron/cron.deny
+fi
+if [ -f /etc/cron.d/cron.deny ]; then
+	mv -f /etc/cron.d/cron.deny /etc/cron/cron.deny
+fi
+
+%triggerpostun -- vixie-cron <= 3.0.1-70
+if [ -f /etc/cron.allow ]; then
+	mv -f /etc/cron.allow /etc/cron/cron.allow
+fi
+if [ -f /etc/cron.deny ]; then
+	mv -f /etc/cron.deny /etc/cron/cron.deny
 fi
 
 %triggerpostun -- hc-cron
