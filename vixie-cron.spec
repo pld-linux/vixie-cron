@@ -1,3 +1,4 @@
+%bcond_with selinux # SELinux support (needs testing)
 Summary:	The Vixie cron daemon for executing specified programs at set times
 Summary(cs):	Démon pro periodické spou¹tìní zadanıch programù v nastaveném èase
 Summary(da):	Vixie cron-dæmon for kørsel af specificerede programmer ved bestemte tider
@@ -20,7 +21,7 @@ Summary(uk):	Vixie cron  - ÄÅÍÏÎ, İÏ ÚÁĞÕÓËÁ¤ ĞÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ĞĞÖ¸¶¨³ÌĞòµÄ Vixie cron ºóÌ¨³ÌĞò¡£
 Name:		vixie-cron
 Version:	3.0.1
-Release:	86
+Release:	87
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
@@ -54,6 +55,7 @@ Patch19:	%{name}-security3.patch
 Patch20:	%{name}-noroot.patch
 Patch21:	%{name}-pam.patch
 Patch22:	%{name}-sgid-crontab.patch
+Patch23:	%{name}-selinux.patch
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -68,6 +70,7 @@ Obsoletes:	crontabs
 Obsoletes:	crondaemon
 Obsoletes:	hc-cron
 BuildRequires:	pam-devel
+%{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -198,6 +201,7 @@ vixie-cron Èí¼ş°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
+%{?with_selinux:%patch23 -p1}
 
 %build
 %{__make} \
