@@ -5,7 +5,7 @@ Summary(pl):	Demon Vixie cron
 Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
 Name:		vixie-cron
 Version:	3.0.1
-Release:	58
+Release:	59
 License:	distributable
 Group:		Daemons
 Group(de):	Server
