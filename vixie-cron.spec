@@ -24,11 +24,13 @@ Release:	79
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
+# Source0-md5:	105369aa4dd09090eb4add7aee98b23e
 Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
 Source4:	%{name}.crontab
 Source5:	%{name}-non-english-man-pages.tar.bz2
+# Source5-md5:	8516dbf0641eb3035d43f18b7ca95c73
 Source6:	%{name}.pam
 Patch0:		%{name}-redhat.patch
 Patch1:		%{name}-security.patch
