@@ -97,13 +97,13 @@ fi
 /sbin/chkconfig --add crond
 
 %files
-%defattr(644, root, root, 755)
-%attr(0700, root, root) %{_sbindir}/crond
-%attr(4755, root, root) %{_bindir}/crontab
+%defattr(644,root,root,755)
+%attr(0700,root,root) %{_sbindir}/crond
+%attr(4755,root,root) %{_bindir}/crontab
 %{_mandir}/man*/*
-%attr(0700, root, root) /var/spool/cron
+%attr(0700,root,root) /var/spool/cron
 %dir /etc/crontab.d
-%attr(0744, root, root) %config /etc/rc.d/init.d/crond
+%attr(0744,root,root) %config /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
 
 %changelog
