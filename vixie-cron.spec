@@ -5,30 +5,34 @@ Summary(pl):	Demon Vixie cron
 Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
 Name:		vixie-cron
 Version:	3.0.1
-Release:	34
+Release:	40
 Copyright:	distributable
 Group:		Daemons
 Group(pl):	Serwery
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
 Source1:	vixie-cron.init
-Source2:	cron.log
+Source2:	cron.logrotate
 Source3:	cron.sysconfig
-Patch0:		vixie-cron-3.0.1-redhat.patch
-Patch1:		vixie-cron-3.0.1-security.patch
-Patch3:		vixie-cron-3.0.1-badsig.patch
-Patch4:		vixie-cron-3.0.1-crontab.patch
-Patch5:		vixie-cron-3.0.1-sigchld.patch
-Patch6:		vixie-cron-3.0.1-sprintf.patch
-Patch7:		vixie-cron-3.0.1-sigchld2.patch
-Patch8:		vixie-cron-3.0.1-crond.patch
-Patch9:		vixie-cron-3.0.1-dst.patch
+Patch0:		vixie-cron-redhat.patch
+Patch1:		vixie-cron-security.patch
+Patch3:		vixie-cron-badsig.patch
+Patch4:		vixie-cron-crontab.patch
+Patch5:		vixie-cron-sigchld.patch
+Patch6:		vixie-cron-sprintf.patch
+Patch7:		vixie-cron-sigchld2.patch
+Patch8:		vixie-cron-crond.patch
+Patch9:		vixie-cron-dst.patch
+Patch10:	vixie-cron-0days.patch
+Patch11:	vixie-cron-security2.patch
+Patch12:	vixie-cron-DESTDIR.patch
 Prereq:		/sbin/chkconfig
 Conflicts:	hc-cron
 Buildroot:	/tmp/%{name}-%{version}-root
 
 %description
-cron is a standard UNIX program that runs user-specified programs at
-periodic scheduled times. vixie cron adds a number of features to the basic
+The vixie-cron package contains the Vixie version of cron. Cron is a
+standard UNIX program that runs user-specified programs at
+periodic scheduled times. Vixie cron adds a number of features to the basic
 UNIX cron, including better security and more powerful configuration
 options.
 
@@ -66,26 +70,27 @@ daha geliþmiþ yapýlandýrma seçenekleri içerir.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
+%patch11 -p1
+%patch12 -p1
 
 %build
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_sbindir},%{_bindir},%{_mandir}/man{1,5,8}} \
-	$RPM_BUILD_ROOT/var/spool/cron \
-	$RPM_BUILD_ROOT/etc/{crontab.d,rc.d/init.d,logrotate.d,sysconfig}
+install -d $RPM_BUILD_ROOT/var/spool/cron \
+	$RPM_BUILD_ROOT/etc/{cron.d,rc.d/init.d,logrotate.d,sysconfig}
 
-install -s cron $RPM_BUILD_ROOT%{_sbindir}/crond
-install -s crontab $RPM_BUILD_ROOT%{_bindir}
-install crontab.1 $RPM_BUILD_ROOT%{_mandir}/man1
-install crontab.5 $RPM_BUILD_ROOT%{_mandir}/man5
-install cron.8 $RPM_BUILD_ROOT%{_mandir}/man8
+make install \
+	DESTDIR=$RPM_BUILD_ROOT \
+	DESTMAN=$RPM_BUILD_ROOT%{_mandir}
+
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/crond
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/cron
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/cron
-
-echo ".so cron.8" >$RPM_BUILD_ROOT%{_mandir}/man8/crond.8
+	
+gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man?/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -107,6 +112,6 @@ fi
 %attr(4755,root,root) %{_bindir}/crontab
 %{_mandir}/man*/*
 %attr(0700,root,root) /var/spool/cron
-%dir /etc/crontab.d
+%attr(0750,root,root) %dir /etc/cron.d
 %attr(0744,root,root) %config /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
