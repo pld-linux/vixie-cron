@@ -20,7 +20,7 @@ Summary(uk):	Vixie cron  - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ÐÐÖ¸¶¨³ÌÐòµÄ Vixie cron ºóÌ¨³ÌÐò¡£
 Name:		vixie-cron
 Version:	3.0.1
-Release:	80
+Release:	81
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
@@ -54,6 +54,7 @@ Patch19:	%{name}-security3.patch
 Patch20:	%{name}-noroot.patch
 Patch21:	%{name}-allow_location.patch
 Patch22:	%{name}-pam.patch
+Patch23:	%{name}-sgid-crontab.patch
 Provides:	crontabs >= 1.7
 Provides:	crondaemon
 Obsoletes:	crontabs
@@ -63,6 +64,8 @@ Prereq:		rc-scripts
 Prereq:		/sbin/chkconfig
 Requires:	/bin/run-parts
 Requires:	psmisc >= 20.1
+Requires(pre): /usr/sbin/groupadd
+Requires(postun):      /usr/sbin/groupdel
 BuildRequires:	pam-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -194,9 +197,13 @@ vixie-cron Èí¼þ°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 %patch20 -p1
 %patch21 -p1
 %patch22 -p1
+%patch23 -p1
 
 %build
-%{__make} CC=%{__cc} RPM_OPT_FLAGS="%{rpmcflags}" LDFLAGS="%{rpmldflags}"
+%{__make} \
+	CC=%{__cc} \
+	RPM_OPT_FLAGS="%{rpmcflags}" \
+	LDFLAGS="%{rpmldflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -247,6 +254,16 @@ EOF2
 rm -rf $RPM_BUILD_ROOT
 
 %post
+if [ -n "`getgid crontab`" ]; then
+       if [ "`getgid crontab`" != "117" ]; then
+               echo "Error: group crontab doesn't have gid=117. Correct this before installing cron." 1>&2
+               exit 1
+       fi
+else
+       echo "Adding group crontab GID=117."
+       /usr/sbin/groupadd -g 117 -r -f crontab
+fi
+
 /sbin/chkconfig --add crond
 if [ -f /var/lock/subsys/crond ]; then
 	/etc/rc.d/init.d/crond restart >&2
@@ -262,7 +279,11 @@ if [ "$1" = "0" ]; then
 		/etc/rc.d/init.d/crond stop >&2
 	fi
 	/sbin/chkconfig --del crond
+
+       echo "Removing group crontab."
+       /usr/sbin/groupdel crontab
 fi
+
 
 %triggerpostun -- vixie-cron <= 3.0.1-73
 if [ -f /etc/cron.d/cron.allow.rpmsave ]; then
@@ -293,16 +314,16 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc CHANGES CONVERSION FEATURES MAIL README THANKS
-%attr(0750,root,root) %dir %{_sysconfdir}/cron*
-%attr(0644,root,root) %config(noreplace) /etc/cron.d/crontab
-%attr(0644,root,root) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
-%attr(0644,root,root) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
-%attr(0644,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
+%attr(0750,root,crontab) %dir %{_sysconfdir}/cron*
+%attr(0644,root,crontab) %config(noreplace) /etc/cron.d/crontab
+%attr(0644,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
+%attr(0644,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
+%attr(0644,root,crontab) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
 %config(noreplace) %verify(not md5 size mtime) /etc/pam.d/cron
 %attr(0754,root,root) /etc/rc.d/init.d/crond
 %config /etc/logrotate.d/cron
 %attr(0755,root,root) %{_sbindir}/crond
-%attr(4755,root,root) %{_bindir}/crontab
+%attr(2755,root,crontab) %{_bindir}/crontab
 
 %{_mandir}/man*/*
 %lang(fi) %{_mandir}/fi/man*/*
@@ -312,5 +333,5 @@ fi
 %lang(ko) %{_mandir}/ko/man*/*
 %lang(pl) %{_mandir}/pl/man*/*
 
-%attr(0700,root,root) /var/spool/cron
+%attr(1730,root,crontab) /var/spool/cron
 %attr(0600,root,root) %ghost /var/log/cron
