@@ -5,7 +5,7 @@ Summary(pl):	Demon Vixie cron
 Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
 Name:		vixie-cron
 Version:	3.0.1
-Release:	43
+Release:	44
 Copyright:	distributable
 Group:		Daemons
 Group(pl):	Serwery
@@ -29,7 +29,7 @@ Patch10:	vixie-cron-0days.patch
 Patch11:	vixie-cron-security2.patch
 Patch12:	vixie-cron-DESTDIR.patch
 Prereq:		/sbin/chkconfig
-Provides:	crontabs
+Provides:	crontabs >= 1.7
 Obsoletes:	crontabs
 Provides:	crondaemon
 Obsoletes:	crondaemon
@@ -98,10 +98,9 @@ make install \
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/crond
 install %{SOURCE2} $RPM_BUILD_ROOT/etc/logrotate.d/cron
 install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/cron
-install %{SOURCE4} $RPM_BUILD_ROOT%{_bindir}
-install %{SOURCE5} $RPM_BUILD_ROOT/etc/cron.d/crontab
-install %{SOURCE6} $RPM_BUILD_ROOT%{_mandir}/pl/man1/crontab.1
-install %{SOURCE7} $RPM_BUILD_ROOT%{_mandir}/pl/man8/cron.8
+install %{SOURCE4} $RPM_BUILD_ROOT/etc/cron.d/crontab
+install %{SOURCE5} $RPM_BUILD_ROOT%{_mandir}/pl/man1/crontab.1
+install %{SOURCE6} $RPM_BUILD_ROOT%{_mandir}/pl/man8/cron.8
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
