@@ -259,10 +259,10 @@ fi
 
 %triggerpostun -- vixie-cron <= 3.0.1-73
 if [ -f /etc/cron.d/cron.allow* ]; then
-	mv /etc/cron.d/cron.allow* /etc/cron/cron.deny
+	mv -f /etc/cron.d/cron.allow* /etc/cron/cron.deny
 fi
 if [ -f /etc/cron.d/cron.deny* ]; then
-	/etc/cron.d/cron.deny* /etc/cron/cron.deny
+	mv -f /etc/cron.d/cron.deny* /etc/cron/cron.deny
 fi
 
 %triggerpostun -- hc-cron
