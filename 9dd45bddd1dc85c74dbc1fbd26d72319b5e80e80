@@ -1,0 +1,3 @@
+- Requires: psmisc >= 20.1 (because of /bin/killall used in logrotate script)
+- spec should be %debug ready now
+- release 64
