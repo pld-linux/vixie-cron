@@ -24,7 +24,7 @@ Summary(uk):	Vixie cron - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ÐÐÖ¸¶¨³ÌÐòµÄ Vixie cron ºóÌ¨³ÌÐò¡£
 Name:		vixie-cron
 Version:	3.0.1
-Release:	93
+Release:	94
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
@@ -62,6 +62,7 @@ Patch23:	%{name}-selinux.patch
 Patch24:	%{name}-selinux-pld.patch
 Patch25:	%{name}-foreground.patch
 Patch26:	%{name}-gcc34.patch
+Patch27:	%{name}-sleep.patch
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	pam-devel
 BuildRequires:	rpmbuild(macros) >= 1.202
@@ -214,6 +215,7 @@ vixie-cron Èí¼þ°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 %{?with_selinux:%patch24 -p1}
 %patch25 -p1
 %{?with_selinux:%patch26 -p1}
+%patch27 -p1
 
 %build
 %{__make} \
