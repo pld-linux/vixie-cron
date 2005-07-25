@@ -97,6 +97,15 @@ diff -uNr vixie-cron-4.1.p7/database.c vixie-cron-4.1/database.c
  	/* we used to keep this dir open all the time, for the sake of
  	 * efficiency.  however, we need to close it in every fork, and
  	 * we fork a lot more often than the mtime of the dir changes.
+@@ -263,7 +263,7 @@
+ 		log_it(fname, getpid(), "NOT REGULAR", tabname);
+ 		goto next_crontab;
+ 	}
+-	if ((statbuf->st_mode & 07777) != 0600) {
++	if ((statbuf->st_mode & 07777) != 0640) {
+ 		log_it(fname, getpid(), "BAD FILE MODE", tabname);
+ 		goto next_crontab;
+ 	}
 diff -uNr vixie-cron-4.1.p7/FEATURES vixie-cron-4.1/FEATURES
 --- vixie-cron-4.1.p7/FEATURES	2005-07-23 12:40:30.000000000 +0200
 +++ vixie-cron-4.1/FEATURES	2005-07-24 22:35:17.000000000 +0200
