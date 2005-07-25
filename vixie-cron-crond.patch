@@ -1,14 +1,29 @@
---- vixie-cron-3.0.1/database.c.crond	Wed Apr 14 18:44:15 1999
-+++ vixie-cron-3.0.1/database.c	Wed Apr 14 18:44:15 1999
-@@ -44,6 +44,7 @@
- 	DIR		*dir;
- 	struct stat	statbuf;
- 	struct stat	syscron_stat;
-+	struct stat	crond_stat;
- 	DIR_T   	*dp;
- 	cron_db		new_db;
- 	user		*u, *nu;
-@@ -59,6 +60,11 @@
+diff -uNr vixie-cron-4.1.p7/cron.8 vixie-cron-4.1/cron.8
+--- vixie-cron-4.1.p7/cron.8	2005-07-24 00:11:24.000000000 +0200
++++ vixie-cron-4.1/cron.8	2005-07-24 22:34:43.000000000 +0200
+@@ -39,7 +39,8 @@
+ searches /var/spool/cron for crontab files which are named after accounts in
+ /etc/passwd; crontabs found are loaded into memory.
+ .I Cron
+-also searches for /etc/crontab which is in a different format (see
++also searches for /etc/cron.d/crontab and the files in the /etc/cron.d/ directory,
++which are in a different format (see
+ .IR crontab (5)).
+ .I Cron
+ then wakes up every minute, examining all stored crontabs, checking each
+diff -uNr vixie-cron-4.1.p7/database.c vixie-cron-4.1/database.c
+--- vixie-cron-4.1.p7/database.c	2005-07-23 12:40:31.000000000 +0200
++++ vixie-cron-4.1/database.c	2005-07-24 22:39:30.000000000 +0200
+@@ -36,7 +36,7 @@
+ 
+ void
+ load_database(cron_db *old_db) {
+-	struct stat statbuf, syscron_stat;
++	struct stat statbuf, syscron_stat, crond_stat;
+ 	cron_db new_db;
+ 	DIR_T *dp;
+ 	DIR *dir;
+@@ -53,6 +53,11 @@
  		(void) exit(ERROR_EXIT);
  	}
  
@@ -16,35 +31,33 @@
 +		log_it("CRON", getpid(), "STAT FAILED", "/etc/cron.d");
 +		(void) exit(ERROR_EXIT);
 +	}
-+
++	
  	/* track system crontab file
  	 */
  	if (stat(SYSCRONTAB, &syscron_stat) < OK)
-@@ -71,7 +77,8 @@
+@@ -65,7 +70,8 @@
  	 * so is guaranteed to be different than the stat() mtime the first
  	 * time this function is called.
  	 */
 -	if (old_db->mtime == TMAX(statbuf.st_mtime, syscron_stat.st_mtime)) {
 +	if (old_db->mtime == TMAX(crond_stat.st_mtime,
-+			      TMAX(statbuf.st_mtime, syscron_stat.st_mtime))) {
- 		Debug(DLOAD, ("[%d] spool dir mtime unch, no load needed.\n",
- 			      getpid()))
++					TMAX(statbuf.st_mtime, syscron_stat.st_mtime))) {
+ 		Debug(DLOAD, ("[%ld] spool dir mtime unch, no load needed.\n",
+ 			      (long)getpid()))
  		return;
-@@ -82,7 +89,8 @@
+@@ -76,13 +82,50 @@
  	 * actually changed.  Whatever is left in the old database when
  	 * we're done is chaff -- crontabs that disappeared.
  	 */
 -	new_db.mtime = TMAX(statbuf.st_mtime, syscron_stat.st_mtime);
 +	new_db.mtime = TMAX(crond_stat.st_mtime,
-+			    TMAX(statbuf.st_mtime, syscron_stat.st_mtime));
++					TMAX(statbuf.st_mtime, syscron_stat.st_mtime));
  	new_db.head = new_db.tail = NULL;
  
- 	if (syscron_stat.st_mtime) {
-@@ -90,6 +98,42 @@
- 				SYSCRONTAB, &syscron_stat,
+ 	if (syscron_stat.st_mtime)
+ 		process_crontab("root", NULL, SYSCRONTAB, &syscron_stat,
  				&new_db, old_db);
- 	}
-+
+ 
 +	if (!(dir = opendir("/etc/cron.d"))) {
 +		log_it("CRON", getpid(), "OPENDIR FAILED", "/etc/cron.d");
 +		(void) exit(ERROR_EXIT);
@@ -80,23 +93,13 @@
 +				&crond_stat, &new_db, old_db);
 +	}
 +	closedir(dir);
- 
++
  	/* we used to keep this dir open all the time, for the sake of
  	 * efficiency.  however, we need to close it in every fork, and
---- vixie-cron-3.0.1/cron.8.crond	Wed Apr 14 18:45:03 1999
-+++ vixie-cron-3.0.1/cron.8	Wed Apr 14 18:46:27 1999
-@@ -32,7 +32,8 @@
- searches /var/spool/cron for crontab files which are named after accounts in
- /etc/passwd; crontabs found are loaded into memory.
- .I Cron
--also searches for /etc/crontab which is in a different format (see
-+also searches for /etc/cron.d/crontab and the files in the /etc/cron.d/ directory,
-+which are in a different format (see
- .IR crontab(5)).
- .I Cron
- then wakes up every minute, examining all stored crontabs, checking each
---- vixie-cron-3.0.1/FEATURES.crond	Wed Apr 14 18:51:49 1999
-+++ vixie-cron-3.0.1/FEATURES	Wed Apr 14 18:53:09 1999
+ 	 * we fork a lot more often than the mtime of the dir changes.
+diff -uNr vixie-cron-4.1.p7/FEATURES vixie-cron-4.1/FEATURES
+--- vixie-cron-4.1.p7/FEATURES	2005-07-23 12:40:30.000000000 +0200
++++ vixie-cron-4.1/FEATURES	2005-07-24 22:35:17.000000000 +0200
 @@ -82,3 +82,8 @@
  	act this way and do the more reasonable thing, which is (IMHO) to "or"
  	the various field-matches together.  In that sense this cron may not
