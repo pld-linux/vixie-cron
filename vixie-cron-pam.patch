@@ -1,32 +1,9 @@
-diff -ur vixie-cron-3.0.1.orig/Makefile vixie-cron-3.0.1/Makefile
---- vixie-cron-3.0.1.orig/Makefile	Thu May 30 19:47:00 2002
-+++ vixie-cron-3.0.1/Makefile	Thu May 30 20:54:46 2002
-@@ -55,7 +55,7 @@
- INCLUDE		=	-I.
- #INCLUDE	=
- #<<need getopt()>>
--LIBS		=
-+LIBS		=	-lpam
- #<<optimize or debug?>>
- OPTIM		=	$(RPM_OPT_FLAGS)
- #OPTIM		=	-g
-@@ -71,7 +71,7 @@
- #<<want to use a nonstandard CC?>>
- #CC		=	vcc
- #<<manifest defines>>
--DEFS		= -s
-+DEFS		=
- #(SGI IRIX systems need this)
- #DEFS		=	-D_BSD_SIGNALS -Dconst=
- #<<the name of the BSD-like install program>>
-Only in vixie-cron-3.0.1: cron.o
-Only in vixie-cron-3.0.1: database.o
-diff -ur vixie-cron-3.0.1.orig/do_command.c vixie-cron-3.0.1/do_command.c
---- vixie-cron-3.0.1.orig/do_command.c	Thu May 30 19:47:00 2002
-+++ vixie-cron-3.0.1/do_command.c	Thu May 30 20:55:50 2002
-@@ -29,6 +29,18 @@
- # include <syslog.h>
- #endif
+diff -uNr vixie-cron-4.1.p20/do_command.c vixie-cron-4.1/do_command.c
+--- vixie-cron-4.1.p20/do_command.c	2005-07-24 23:13:19.000000000 +0200
++++ vixie-cron-4.1/do_command.c	2005-07-24 23:41:34.000000000 +0200
+@@ -25,6 +25,17 @@
+ 
+ #include "cron.h"
  
 +#include <security/pam_appl.h>
 +static pam_handle_t *pamh = NULL;
@@ -39,20 +16,19 @@ diff -ur vixie-cron-3.0.1.orig/do_command.c vixie-cron-3.0.1/do_command.c
 +	pam_end(pamh, retcode); exit(1); \
 +	}
 +
-+
+ static void		child_process(entry *, user *);
+ static int		safe_p(const char *, const char *);
  
- static void		child_process __P((entry *, user *)),
- 			do_univ __P((user *));
-@@ -77,6 +89,7 @@
- 	register char	*input_data;
- 	char		*usernm, *mailto;
- 	int		children = 0;
-+	int		retcode = 0;
+@@ -65,6 +76,7 @@
+ 	int stdin_pipe[2], stdout_pipe[2];
+ 	char *input_data, *usernm, *mailto;
+ 	int children = 0;
++	int retcode = 0;
  
- 	Debug(DPROC, ("[%d] child_process('%s')\n", getpid(), e->cmd))
+ 	Debug(DPROC, ("[%ld] child_process('%s')\n", (long)getpid(), e->cmd))
  
-@@ -159,6 +172,15 @@
- 		}
+@@ -135,6 +147,15 @@
+ 		*p = '\0';
  	}
  
 +	retcode = pam_start("cron", usernm, &conv, &pamh);
@@ -67,19 +43,34 @@ diff -ur vixie-cron-3.0.1.orig/do_command.c vixie-cron-3.0.1/do_command.c
  	/* fork again, this time so we can exec the user's command.
  	 */
  	switch (vfork()) {
-@@ -483,7 +505,11 @@
- 		if (WIFSIGNALED(waiter) && WCOREDUMP(waiter))
+@@ -516,6 +537,9 @@
  			Debug(DPROC, (", dumped core"))
  		Debug(DPROC, ("\n"))
-+ 
  	}
 +	pam_setcred(pamh, PAM_DELETE_CRED | PAM_SILENT);
 +	retcode = pam_close_session(pamh, PAM_SILENT);
 +	pam_end(pamh, retcode);
  }
  
- 
-Only in vixie-cron-3.0.1: do_command.c~
-Only in vixie-cron-3.0.1: entry.o
-Only in vixie-cron-3.0.1: job.o
-Only in vixie-cron-3.0.1: user.o
+ static int
+diff -uNr vixie-cron-4.1.p20/Makefile vixie-cron-4.1/Makefile
+--- vixie-cron-4.1.p20/Makefile	2005-07-24 00:05:03.000000000 +0200
++++ vixie-cron-4.1/Makefile	2005-07-24 23:37:58.000000000 +0200
+@@ -59,7 +59,7 @@
+ INCLUDE		=	-I.
+ #INCLUDE	=
+ #<<need getopt()>>
+-LIBS		=
++LIBS		=	-lpam
+ #<<optimize or debug?>>
+ CDEBUG		=	$(RPM_OPT_FLAGS)
+ #CDEBUG		=	-g
+@@ -68,7 +68,7 @@
+ #<<want to use a nonstandard CC?>>
+ CC		=	gcc -Wall -Wno-unused -Wno-comment
+ #<<manifest defines>>
+-DEFS		=	-s
++DEFS		=	
+ #(SGI IRIX systems need this)
+ #DEFS		=	-D_BSD_SIGNALS -Dconst=
+ #<<the name of the BSD-like install program>>

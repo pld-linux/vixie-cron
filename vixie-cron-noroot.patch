@@ -1,32 +1,32 @@
---- vixie-cron-3.0.1/crontab.c~	Wed May 31 15:38:25 1995
-+++ vixie-cron-3.0.1/crontab.c	Tue May  8 16:30:09 2001
-@@ -294,7 +294,7 @@
- edit_cmd() {
- 	char		n[MAX_FNAME], q[MAX_TEMPSTR], *editor;
- 	FILE		*f;
--	int		ch, t, x;
-+	int		ch, t, x, saved_uid;
- 	struct stat	statbuf;
- 	time_t		mtime;
- 	WAIT_T		waiter;
-@@ -362,6 +362,12 @@
- 		perror(Filename);
+diff -uNr vixie-cron-4.1.p19/crontab.c vixie-cron-4.1/crontab.c
+--- vixie-cron-4.1.p19/crontab.c	2005-07-24 23:23:18.000000000 +0200
++++ vixie-cron-4.1/crontab.c	2005-07-24 23:35:28.000000000 +0200
+@@ -288,6 +288,7 @@
+ 	char n[MAX_FNAME], q[MAX_TEMPSTR], *editor;
+ 	FILE *f;
+ 	int ch, t, x;
++	uid_t saved_uid;
+ 	struct stat statbuf;
+ 	struct utimbuf utimebuf;
+ 	WAIT_T waiter;
+@@ -376,6 +377,12 @@
  		exit(ERROR_EXIT);
  	}
+ 	utime(Filename, &utimebuf);
 +	/* Do not move this statement! */
-+	saved_uid = getuid();
++	saved_uid = MY_UID(pw);
 +	if (saved_uid < 0) {
 +		perror("getuid");
 +		exit(ERROR_EXIT);
-+	}
++	}	
   again:
  	rewind(NewCrontab);
  	if (ferror(NewCrontab)) {
-@@ -396,7 +402,7 @@
- 		goto fatal;
- 	case 0:
- 		/* child */
--		if (setuid(getuid()) < 0) {
+@@ -409,7 +416,7 @@
+ 			perror("setgid(getgid())");
+ 			exit(ERROR_EXIT);
+ 		}
+-		if (setuid(MY_UID(pw)) < 0) {
 +		if (setuid(saved_uid) < 0) {
  			perror("setuid(getuid())");
  			exit(ERROR_EXIT);

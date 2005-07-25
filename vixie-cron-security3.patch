@@ -1,46 +1,41 @@
-diff -urN vixie-cron-3.0.1.old/cron.h vixie-cron-3.0.1/cron.h
---- vixie-cron-3.0.1.old/cron.h	Mon Feb 12 16:53:28 2001
-+++ vixie-cron-3.0.1/cron.h	Mon Feb 12 17:28:16 2001
-@@ -68,7 +68,12 @@
- #define	MAX_COMMAND	1000	/* max length of internally generated cmd */
- #define	MAX_ENVSTR	1000	/* max length of envvar=value\0 strings */
- #define	MAX_TEMPSTR	100	/* obvious */
--#define	MAX_UNAME	20	/* max length of username, should be overkill */
-+#if defined(__GLIBC__) && ( __GLIBC__ >= 2 )
-+#include <utmpx.h>
-+#define MAX_UNAME	__UT_NAMESIZE
-+#else
-+#define	MAX_UNAME	32	/* max length of username, should be overkill */
-+#endif
- #define	ROOT_UID	0	/* don't change this, it really must be root */
- #define	ROOT_USER	"root"	/* ditto */
- 
-diff -urN vixie-cron-3.0.1.old/crontab.c vixie-cron-3.0.1/crontab.c
---- vixie-cron-3.0.1.old/crontab.c	Mon Feb 12 16:53:29 2001
-+++ vixie-cron-3.0.1/crontab.c	Mon Feb 12 17:31:34 2001
-@@ -143,8 +143,14 @@
- 		fprintf(stderr, "bailing out.\n");
+diff -uNr vixie-cron-4.1.p18/crontab.c vixie-cron-4.1/crontab.c
+--- vixie-cron-4.1.p18/crontab.c	2005-07-23 12:40:30.000000000 +0200
++++ vixie-cron-4.1/crontab.c	2005-07-24 23:23:18.000000000 +0200
+@@ -132,8 +132,10 @@
+ 		fprintf(stderr, "username too long\n");
  		exit(ERROR_EXIT);
  	}
 -	strcpy(User, pw->pw_name);
 -	strcpy(RealUser, User);
-+	if (strlen (pw->pw_name) >= sizeof(User)) {
-+		fprintf(stderr, "crontab: fatal: username too long\n");
-+		exit(ERROR_EXIT);
-+	}
 +	memset(User,0,MAX_UNAME);
 +	memset(RealUser,0,MAX_UNAME);
 +	strncpy(User, pw->pw_name, MAX_UNAME - 1);
 +	strncpy(RealUser, User, MAX_UNAME - 1);
  	Filename[0] = '\0';
  	Option = opt_unknown;
- 	while (EOF != (argch = getopt(argc, argv, "u:lerx:"))) {
-@@ -166,7 +172,7 @@
- 					ProgramName, optarg);
- 				exit(ERROR_EXIT);
+ 	while (-1 != (argch = getopt(argc, argv, getoptargs))) {
+@@ -157,7 +159,7 @@
  			}
+ 			if (strlen(optarg) >= sizeof User)
+ 				usage("username too long");
 -			(void) strcpy(User, optarg);
 +			(void) strncpy(User, optarg, MAX_UNAME - 1);
  			break;
  		case 'l':
  			if (Option != opt_unknown)
+diff -uNr vixie-cron-4.1.p18/macros.h vixie-cron-4.1/macros.h
+--- vixie-cron-4.1.p18/macros.h	2005-07-23 12:40:30.000000000 +0200
++++ vixie-cron-4.1/macros.h	2005-07-24 23:19:19.000000000 +0200
+@@ -48,7 +48,12 @@
+ #define	MAX_COMMAND	1000	/* max length of internally generated cmd */
+ #define	MAX_ENVSTR	1000	/* max length of envvar=value\0 strings */
+ #define	MAX_TEMPSTR	100	/* obvious */
++#if defined(__GLIBC__) && ( __GLIBC__ >= 2 )
++#include <utmpx.h>
++#define MAX_UNAME	__UT_NAMESIZE
++#else
+ #define	MAX_UNAME	33	/* max length of username, should be overkill */
++#endif
+ #define	ROOT_UID	0	/* don't change this, it really must be root */
+ #define	ROOT_USER	"root"	/* ditto */
+ 
