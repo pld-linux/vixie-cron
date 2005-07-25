@@ -23,12 +23,12 @@ Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
 Summary(uk):	Vixie cron - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ÐÐÖ¸¶¨³ÌÐòµÄ Vixie cron ºóÌ¨³ÌÐò¡£
 Name:		vixie-cron
-Version:	3.0.1
-Release:	94
+Version:	4.1
+Release:	0.1
 License:	distributable
 Group:		Daemons
-Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
-# Source0-md5:	105369aa4dd09090eb4add7aee98b23e
+Source0:	ftp://ftp.isc.org/isc/cron/cron_%{version}.shar
+# Source0-md5:	5e1be9dbde66295821ac7899f2e1f561
 Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
@@ -36,33 +36,19 @@ Source4:	%{name}.crontab
 Source5:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source5-md5:	8516dbf0641eb3035d43f18b7ca95c73
 Source6:	%{name}.pam
-Patch0:		%{name}-redhat.patch
-Patch1:		%{name}-security.patch
-Patch3:		%{name}-badsig.patch
-Patch4:		%{name}-crontab.patch
-Patch5:		%{name}-sigchld.patch
-Patch6:		%{name}-sprintf.patch
-Patch7:		%{name}-sigchld2.patch
-Patch8:		%{name}-crond.patch
-Patch9:		%{name}-dst.patch
-Patch10:	%{name}-0days.patch
-Patch11:	%{name}-security2.patch
-Patch12:	%{name}-DESTDIR.patch
-Patch13:	%{name}-linux.patch
-Patch14:	%{name}-crontabloc.patch
-Patch15:	%{name}-nodot.patch
-Patch16:	%{name}-time.h.patch
-Patch17:	%{name}-newtime.patch
-Patch18:	%{name}-name.patch
-Patch19:	%{name}-security3.patch
-Patch20:	%{name}-noroot.patch
-Patch21:	%{name}-pam.patch
-Patch22:	%{name}-sgid-crontab.patch
-Patch23:	%{name}-selinux.patch
-Patch24:	%{name}-selinux-pld.patch
-Patch25:	%{name}-foreground.patch
-Patch26:	%{name}-gcc34.patch
-Patch27:	%{name}-sleep.patch
+Patch0:		%{name}-pld.patch
+Patch1:		%{name}-sprintf.patch
+Patch2:		%{name}-sigchld2.patch
+Patch3:		%{name}-crond.patch
+Patch4:		%{name}-manpages.patch
+Patch5:		%{name}-name.patch
+Patch6:		%{name}-security3.patch
+Patch7:		%{name}-noroot.patch
+Patch8:		%{name}-pam.patch
+Patch9:		%{name}-sgid-crontab.patch
+Patch10:	%{name}-selinux.patch
+Patch11:	%{name}-foreground.patch
+Patch12:	%{name}-fd0open.patch
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	pam-devel
 BuildRequires:	rpmbuild(macros) >= 1.202
@@ -188,9 +174,11 @@ vixie-cron Èí¼þ°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 ±ê×¼°æ±¾Ïà±È£¬Vixie cron ¾ßÓÐ¸ü¸ßµÄ°²È«ÐÔºÍ¹¦ÄÜ¸üÇ¿µÄÅäÖÃÑ¡Ïî¡£
 
 %prep
-%setup -q -a5
+%setup -T -c -q -a5
+/bin/sh %{SOURCE0}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
@@ -198,24 +186,9 @@ vixie-cron Èí¼þ°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-%patch10 -p1
+%{?with_selinux:%patch10 -p1}
 %patch11 -p1
 %patch12 -p1
-%patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
-%patch20 -p1
-%patch21 -p1
-%patch22 -p1
-%{?with_selinux:%patch23 -p1}
-%{?with_selinux:%patch24 -p1}
-%patch25 -p1
-%{?with_selinux:%patch26 -p1}
-%patch27 -p1
 
 %build
 %{__make} \
