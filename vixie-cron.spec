@@ -321,15 +321,15 @@ done
 %files
 %defattr(644,root,root,755)
 %doc CHANGES CONVERSION FEATURES MAIL README THANKS
-%attr(0750,root,crontab) %dir %{_sysconfdir}/cron*
-%attr(0640,root,crontab) %config(noreplace,missingok) /etc/cron.d/crontab
-%attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
-%attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
-%attr(0640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
-%config(noreplace) %verify(not md5 size mtime) /etc/pam.d/cron
-%attr(0754,root,root) /etc/rc.d/init.d/crond
-%attr(640,root,root) %config(noreplace) %verify(not size mtime md5) /etc/logrotate.d/cron
-%attr(0755,root,root) %{_sbindir}/crond
+%attr(750,root,crontab) %dir %{_sysconfdir}/cron*
+%attr(640,root,crontab) %config(noreplace,missingok) /etc/cron.d/crontab
+%attr(640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
+%attr(640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
+%config(noreplace) %verify(not md5 mtime size) /etc/pam.d/cron
+%attr(754,root,root) /etc/rc.d/init.d/crond
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/cron
+%attr(755,root,root) %{_sbindir}/crond
 %attr(2755,root,crontab) %{_bindir}/crontab
 
 %{_mandir}/man*/*
@@ -341,4 +341,4 @@ done
 %lang(pl) %{_mandir}/pl/man*/*
 
 %attr(1730,root,crontab) /var/spool/cron
-%attr(0660,root,crontab) %ghost /var/log/cron
+%attr(660,root,crontab) %ghost /var/log/cron
