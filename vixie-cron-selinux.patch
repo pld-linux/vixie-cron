@@ -29,15 +29,6 @@ diff -uNr vixie-cron-4.1.p22/database.c vixie-cron-4.1/database.c
  #define TMAX(a,b) ((a)>(b)?(a):(b))
  
  static	void		process_crontab(const char *, const char *,
-@@ -121,7 +130,7 @@
- 		(void) strcpy(fname, dp->d_name);
- 		snprintf(tabname, MAXNAMLEN+1, "/etc/cron.d/%s", fname);
- 
--		process_crontab("root", "*system*", tabname,
-+		process_crontab("root", SYSUSERNAME, tabname,
- 				&crond_stat, &new_db, old_db);
- 	}
- 	closedir(dir);
 @@ -226,7 +235,7 @@
  	if (fname == NULL) {
  		/* must be set to something for logging purposes.

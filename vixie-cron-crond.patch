@@ -89,7 +89,7 @@ diff -uNr vixie-cron-4.1.p7/database.c vixie-cron-4.1/database.c
 +		(void) strcpy(fname, dp->d_name);
 +		snprintf(tabname, MAXNAMLEN+1, "/etc/cron.d/%s", fname);
 +
-+		process_crontab("root", "*system*", tabname,
++		process_crontab("root", NULL, tabname,
 +				&crond_stat, &new_db, old_db);
 +	}
 +	closedir(dir);
