@@ -102,7 +102,7 @@ diff -uNr vixie-cron-4.1.p7/database.c vixie-cron-4.1/database.c
  		goto next_crontab;
  	}
 -	if ((statbuf->st_mode & 07777) != 0600) {
-+	if ((statbuf->st_mode & 07777) != 0640) {
++	if ((statbuf->st_mode & 07733) != 0600) {
  		log_it(fname, getpid(), "BAD FILE MODE", tabname);
  		goto next_crontab;
  	}
