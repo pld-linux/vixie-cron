@@ -139,3 +139,14 @@ diff -uNr vixie-cron-4.1.orig/pathnames.h vixie-cron-4.1/pathnames.h
  #define _PATH_CRON_PID	PIDDIR PIDFILE
  
  			/* 4.3BSD-style crontab */
+--- vixie-cron-4.1/config.h	Wed May 31 17:37:20 1995
++++ vixie-cron-4.1/config.h	Wed Feb 12 19:26:35 1997
+@@ -78,7 +78,7 @@
+ 			 * are both defined, then logging will go to both
+ 			 * places.
+ 			 */
+-#define SYSLOG	 			/*-*/
++/*#define SYSLOG	 			/*-*/
+ 
+ 			/* if you want cron to capitalize its name in ps
+ 			 * when running a job.  Does not work on SYSV.
