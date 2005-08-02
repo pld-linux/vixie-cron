@@ -1,0 +1,26 @@
+diff -u vixie.orig/config.h vixie/config.h
+--- vixie.orig/config.h	2005-08-02 13:10:26.000000000 +0200
++++ vixie/config.h	2005-08-02 13:57:07.711319504 +0200
+@@ -29,7 +29,7 @@
+  */
+ 
+ #ifndef DEBUGGING
+-#define DEBUGGING 1	/* 1 or 0 -- do you want debugging code built in? */
++#define DEBUGGING 0	/* 1 or 0 -- do you want debugging code built in? */
+ #endif
+ 
+ 			/*
+diff -u vixie.orig/cron.c vixie/cron.c
+--- vixie.orig/cron.c	2005-08-02 13:10:26.000000000 +0200
++++ vixie/cron.c	2005-08-02 13:57:51.571651720 +0200
+@@ -49,8 +49,10 @@
+ 	const char **dflags;
+ 
+ 	fprintf(stderr, "usage:  %s [-f] [-n] [-x [", ProgramName);
++#if DEBUGGING
+ 	for (dflags = DebugFlagNames; *dflags; dflags++)
+ 		fprintf(stderr, "%s%s", *dflags, dflags[1] ? "," : "]");
++#endif
+ 	fprintf(stderr, "]\n");
+ 	exit(ERROR_EXIT);
+ }
