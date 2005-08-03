@@ -1,0 +1,28 @@
+--- ./pathnames.h.org	Fri Feb 15 13:36:42 2002
++++ ./pathnames.h	Fri Feb 15 13:41:06 2002
+@@ -47,9 +47,9 @@
+ 			 * LOG_FILE or SYSLOG is defined, we don't log.  If
+ 			 * both are defined, we log both ways.
+ 			 */
+-#define	ALLOW_FILE	"/etc/cron.allow"		/*-*/
+-#define DENY_FILE	"/etc/cron.deny"		/*-*/
+-#define LOG_FILE	"/var/log/cron"		/*-*/
++#define	ALLOW_FILE	"/etc/cron/cron.allow"	/*-*/
++#define DENY_FILE	"/etc/cron/cron.deny"		/*-*/
++#define LOG_FILE	"/var/log/cron"			/*-*/
+ 
+ 			/* where should the daemon stick its PID?
+ 			 */
+--- ./crontab.1.org	Fri Feb 15 13:36:42 2002
++++ ./crontab.1	Fri Feb 15 13:43:47 2002
+@@ -83,8 +83,8 @@
+ crontab(5), cron(8)
+ .SH FILES
+ .nf
+-/etc/cron.allow
+-/etc/cron.deny
++/etc/cron/cron.allow
++/etc/cron/cron.deny
+ .fi
+ .SH STANDARDS
+ The
