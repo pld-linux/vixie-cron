@@ -24,7 +24,7 @@ Summary(uk):	Vixie cron - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ÐÐÖ¸¶¨³ÌÐòµÄ Vixie cron ºóÌ¨³ÌÐò¡£
 Name:		vixie-cron
 Version:	4.1
-Release:	3
+Release:	4
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.isc.org/isc/cron/cron_%{version}.shar
@@ -51,6 +51,7 @@ Patch11:	%{name}-foreground.patch
 Patch12:	%{name}-fd0open.patch
 Patch13:	%{name}-CAN-2005-1038.patch
 Patch14:	%{name}-nodebug.patch
+Patch15:	%{name}-syslog-facility.patch
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	pam-devel
 BuildRequires:	rpmbuild(macros) >= 1.202
@@ -193,6 +194,7 @@ vixie-cron Èí¼þ°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 %patch12 -p1
 %patch13 -p1
 %patch14 -p1
+%patch15 -p0
 
 %build
 %{__make} \
