@@ -1,0 +1,13 @@
+--- do_command.c.orig	2005-08-03 15:07:25.718165312 +0200
++++ do_command.c	2005-08-03 15:13:43.082797168 +0200
+@@ -159,6 +159,10 @@
+ 	PAM_FAIL_CHECK;
+ 	retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED | PAM_SILENT);
+ 	PAM_FAIL_CHECK;
++	/* PAM has reopened syslog with facility AUTH. we must close
++	 * in order to log with correct facility in misc.c
++	 */
++	log_close();
+ 
+ 	/* fork again, this time so we can exec the user's command.
+ 	 */
