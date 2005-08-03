@@ -1,6 +1,6 @@
-diff -u vixie.orig/config.h vixie/config.h
---- vixie.orig/config.h	2005-08-02 13:10:26.000000000 +0200
-+++ vixie/config.h	2005-08-02 13:57:07.711319504 +0200
+diff -ur vixie.orig/config.h vixie/config.h
+--- vixie.orig/config.h	2005-08-03 14:22:29.000000000 +0200
++++ vixie/config.h	2005-08-03 14:41:00.745117840 +0200
 @@ -29,7 +29,7 @@
   */
  
@@ -10,17 +10,23 @@ diff -u vixie.orig/config.h vixie/config.h
  #endif
  
  			/*
-diff -u vixie.orig/cron.c vixie/cron.c
---- vixie.orig/cron.c	2005-08-02 13:10:26.000000000 +0200
-+++ vixie/cron.c	2005-08-02 13:57:51.571651720 +0200
-@@ -49,8 +49,10 @@
+diff -ur vixie.orig/cron.c vixie/cron.c
+--- vixie.orig/cron.c	2005-08-03 14:22:29.000000000 +0200
++++ vixie/cron.c	2005-08-03 14:42:01.843829424 +0200
+@@ -48,10 +48,13 @@
+ usage(void) {
  	const char **dflags;
  
- 	fprintf(stderr, "usage:  %s [-f] [-n] [-x [", ProgramName);
+-	fprintf(stderr, "usage:  %s [-f] [-n] [-x [", ProgramName);
++	fprintf(stderr, "usage:  %s [-f] [-n]", ProgramName);
 +#if DEBUGGING
++	fprintf(stderr, " [-x [");
  	for (dflags = DebugFlagNames; *dflags; dflags++)
- 		fprintf(stderr, "%s%s", *dflags, dflags[1] ? "," : "]");
+-		fprintf(stderr, "%s%s", *dflags, dflags[1] ? "," : "]");
+-	fprintf(stderr, "]\n");
++		fprintf(stderr, "%s%s", *dflags, dflags[1] ? "," : "]]");
 +#endif
- 	fprintf(stderr, "]\n");
++	fprintf(stderr, "\n");
  	exit(ERROR_EXIT);
  }
+ 

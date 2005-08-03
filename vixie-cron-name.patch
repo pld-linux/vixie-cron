@@ -15,8 +15,8 @@ diff -uNr vixie-cron-4.1.p9/globals.h vixie-cron-4.1/globals.h
 @@ -60,6 +60,7 @@
  	;
  
- XTRN char	*ProgramName INIT("amnesia");
-+XTRN char	*SyslogName INIT("amnesia");
+ XTRN char	*ProgramName INIT("crond");
++XTRN char	*SyslogName INIT("crond");
  XTRN int	LineNumber INIT(0);
  XTRN time_t	StartTime INIT(0);
  XTRN int	NoFork INIT(0);
