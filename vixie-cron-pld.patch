@@ -126,7 +126,7 @@ diff -uNr vixie-cron-4.1.orig/pathnames.h vixie-cron-4.1/pathnames.h
  			 * be used.
  			 */
 -#define LOG_FILE	"log"
-+#define LOG_FILE	"/var/log/cron"
++#undef LOG_FILE
  
  			/* where should the daemon stick its PID?
  			 * PIDDIR must end in '/'.
@@ -139,14 +139,15 @@ diff -uNr vixie-cron-4.1.orig/pathnames.h vixie-cron-4.1/pathnames.h
  #define _PATH_CRON_PID	PIDDIR PIDFILE
  
  			/* 4.3BSD-style crontab */
---- vixie-cron-4.1/config.h	Wed May 31 17:37:20 1995
-+++ vixie-cron-4.1/config.h	Wed Feb 12 19:26:35 1997
-@@ -78,7 +78,7 @@
- 			 * are both defined, then logging will go to both
- 			 * places.
- 			 */
--#define SYSLOG	 			/*-*/
-+/*#define SYSLOG	 			/*-*/
+diff -uNr vixie-cron-4.1.orig/globals.h vixie-cron-4.1/globals.h
+--- vixie-cron-4.1.orig/globals.h	2005-08-03 15:03:12.699629976 +0200
++++ vixie-cron-4.1/globals.h	2005-08-03 15:03:58.225708960 +0200
+@@ -59,7 +59,7 @@
+ #endif
+ 	;
  
- 			/* if you want cron to capitalize its name in ps
- 			 * when running a job.  Does not work on SYSV.
+-XTRN char	*ProgramName INIT("amnesia");
++XTRN char	*ProgramName INIT("crond");
+ XTRN int	LineNumber INIT(0);
+ XTRN time_t	StartTime INIT(0);
+ XTRN int	NoFork INIT(0);
