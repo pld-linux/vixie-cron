@@ -1,7 +1,4 @@
 #
-# Conditional build:
-%bcond_without	selinux		# without SELinux support
-#
 Summary:	The Vixie cron daemon for executing specified programs at set times
 Summary(cs):	Démon pro periodické spou¹tìní zadaných programù v nastaveném èase
 Summary(da):	Vixie cron-dæmon for kørsel af specificerede programmer ved bestemte tider
@@ -24,7 +21,7 @@ Summary(uk):	Vixie cron - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ÐÐÖ¸¶¨³ÌÐòµÄ Vixie cron ºóÌ¨³ÌÐò¡£
 Name:		vixie-cron
 Version:	4.1
-Release:	3
+Release:	2
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.isc.org/isc/cron/cron_%{version}.shar
@@ -46,14 +43,12 @@ Patch6:		%{name}-security3.patch
 Patch7:		%{name}-noroot.patch
 Patch8:		%{name}-pam.patch
 Patch9:		%{name}-sgid-crontab.patch
-Patch10:	%{name}-selinux.patch
-Patch11:	%{name}-foreground.patch
-Patch12:	%{name}-fd0open.patch
-Patch13:	%{name}-CAN-2005-1038.patch
-Patch14:	%{name}-nodebug.patch
-%{?with_selinux:BuildRequires:	libselinux-devel}
+Patch10:	%{name}-foreground.patch
+Patch11:	%{name}-fd0open.patch
+Patch12:	%{name}-CAN-2005-1038.patch
+Patch13:	%{name}-nodebug.patch
+Patch14:	%{name}-syslog-facility.patch
 BuildRequires:	pam-devel
-BuildRequires:	rpmbuild(macros) >= 1.202
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -66,9 +61,8 @@ Provides:	crontabs >= 1.7
 Provides:	crondaemon
 Provides:	group(crontab)
 Obsoletes:	crontabs
-Obsoletes:	fcron
+Obsoletes:	crondaemon
 Obsoletes:	hc-cron
-Obsoletes:	mcron
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -188,11 +182,11 @@ vixie-cron Èí¼þ°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-%{?with_selinux:%patch10 -p1}
+%patch10 -p1
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-%patch14 -p1
+%patch14 -p0
 
 %build
 %{__make} \
@@ -235,21 +229,29 @@ done
 touch $RPM_BUILD_ROOT/var/log/cron
 
 cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.allow << EOF
-# cron.allow	This file describes the names of the users which are
-#		allowed to use the local cron daemon
+# cron.allow   This file describes the names of the users which are
+#               allowed to use the local cron daemon
 root
 EOF
 
 cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.deny << EOF2
-# cron.deny	This file describes the names of the users which are
-#		NOT allowed to use the local cron daemon
+# cron.deny    This file describes the names of the users which are
+#               NOT allowed to use the local cron daemon
 EOF2
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-%groupadd -g 117 -r -f crontab
+if [ -n "`/usr/bin/getgid crontab`" ]; then
+	if [ "`/usr/bin/getgid crontab`" != "117" ]; then
+		echo "Error: group crontab doesn't have gid=117. Correct this before installing cron." 1>&2
+		exit 1
+	fi
+else
+	echo "Adding group crontab GID=117."
+	/usr/sbin/groupadd -g 117 -r -f crontab
+fi
 
 %post
 /sbin/chkconfig --add crond
@@ -273,7 +275,8 @@ fi
 
 %postun
 if [ "$1" = "0" ]; then
-	%groupremove crontab
+	echo "Removing group crontab."
+	/usr/sbin/groupdel crontab
 fi
 
 %triggerpostun -- vixie-cron <= 3.0.1-85

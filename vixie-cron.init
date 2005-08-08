@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 #
 # crond		Start/Stop the cron clock daemon.
 #
@@ -71,7 +71,7 @@ case "$1" in
 	;;
   reload|force-reload)
 	if [ -f /var/lock/subsys/crond ]; then
-		msg_reloading "Vixie cron"
+		msg_reloading
 		killproc crond -HUP
 		RETVAL=$?
 	else
