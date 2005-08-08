@@ -1,3 +1,4 @@
+#
 Summary:	The Vixie cron daemon for executing specified programs at set times
 Summary(cs):	Démon pro periodické spou¹tìní zadaných programù v nastaveném èase
 Summary(da):	Vixie cron-dæmon for kørsel af specificerede programmer ved bestemte tider
@@ -8,7 +9,7 @@ Summary(id):	Vixie cron daemon untuk menjalankan program pada waktu yang ditentu
 Summary(is):	Vixie cron púkinn keyrir skilgreind forrit á ákveðnum tímum
 Summary(it):	Vixie: demone di cron per eseguire programmi a orari prestabiliti
 Summary(ja):	ÀßÄê¤µ¤ì¤¿»þ´Ö¤ËÆÃÄê¤Î¥×¥í¥°¥é¥à¤ò¼Â¹Ô¤¹¤ë Vixie cron ¥Ç¡¼¥â¥ó
-Summary(no):	Vixie cron-daemon for kjøring av spesifiserte programmer ved bestemte tider
+Summary(nb):	Vixie cron-daemon for kjøring av spesifiserte programmer ved bestemte tider
 Summary(pl):	Demon Vixie cron uruchamiaj±cy zadane programy w okre¶lonym czasie
 Summary(pt):	O 'daemon' cron Vixie para executar programas indicados em alturas definidas
 Summary(ru):	Vixie cron - ÄÅÍÏÎ, ÚÁÐÕÓËÁÀÝÉÊ ÐÒÏÃÅÓÓÙ ÐÏ ÒÁÓÐÉÓÁÎÉÀ
@@ -16,15 +17,15 @@ Summary(sk):	Vixie cron démon na spú¹»anie daných programov v urèený èas
 Summary(sl):	Stre¾nik Vixie cron za izvajanje programov ob doloèenih èasih
 Summary(sv):	Vixie-cron-demonen för att köra angivna program vid bestämda tider
 Summary(tr):	Vixie cron süreci, periyodik program çalýþtýrma yeteneði
-Summary(uk):	Vixie cron  - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
+Summary(uk):	Vixie cron - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ÐÐÖ¸¶¨³ÌÐòµÄ Vixie cron ºóÌ¨³ÌÐò¡£
 Name:		vixie-cron
-Version:	3.0.1
-Release:	86
+Version:	4.1
+Release:	2
 License:	distributable
 Group:		Daemons
-Source0:	ftp://ftp.vix.com/pub/vixie/%{name}-%{version}.tar.gz
-# Source0-md5:	105369aa4dd09090eb4add7aee98b23e
+Source0:	ftp://ftp.isc.org/isc/cron/cron_%{version}.shar
+# Source0-md5:	5e1be9dbde66295821ac7899f2e1f561
 Source1:	%{name}.init
 Source2:	cron.logrotate
 Source3:	cron.sysconfig
@@ -32,42 +33,36 @@ Source4:	%{name}.crontab
 Source5:	http://www.mif.pg.gda.pl/homepages/ankry/man-PLD/%{name}-non-english-man-pages.tar.bz2
 # Source5-md5:	8516dbf0641eb3035d43f18b7ca95c73
 Source6:	%{name}.pam
-Patch0:		%{name}-redhat.patch
-Patch1:		%{name}-security.patch
-Patch3:		%{name}-badsig.patch
-Patch4:		%{name}-crontab.patch
-Patch5:		%{name}-sigchld.patch
-Patch6:		%{name}-sprintf.patch
-Patch7:		%{name}-sigchld2.patch
-Patch8:		%{name}-crond.patch
-Patch9:		%{name}-dst.patch
-Patch10:	%{name}-0days.patch
-Patch11:	%{name}-security2.patch
-Patch12:	%{name}-DESTDIR.patch
-Patch13:	%{name}-linux.patch
-Patch14:	%{name}-crontabloc.patch
-Patch15:	%{name}-nodot.patch
-Patch16:	%{name}-time.h.patch
-Patch17:	%{name}-newtime.patch
-Patch18:	%{name}-name.patch
-Patch19:	%{name}-security3.patch
-Patch20:	%{name}-noroot.patch
-Patch21:	%{name}-pam.patch
-Patch22:	%{name}-sgid-crontab.patch
+Patch0:		%{name}-pld.patch
+Patch1:		%{name}-sprintf.patch
+Patch2:		%{name}-sigchld2.patch
+Patch3:		%{name}-crond.patch
+Patch4:		%{name}-manpages.patch
+Patch5:		%{name}-name.patch
+Patch6:		%{name}-security3.patch
+Patch7:		%{name}-noroot.patch
+Patch8:		%{name}-pam.patch
+Patch9:		%{name}-sgid-crontab.patch
+Patch10:	%{name}-foreground.patch
+Patch11:	%{name}-fd0open.patch
+Patch12:	%{name}-CAN-2005-1038.patch
+Patch13:	%{name}-nodebug.patch
+Patch14:	%{name}-syslog-facility.patch
+BuildRequires:	pam-devel
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(post,preun):	/sbin/chkconfig
 Requires(post):	fileutils
-Requires(postun):      /usr/sbin/groupdel
+Requires(postun):	/usr/sbin/groupdel
 Requires:	/bin/run-parts
 Requires:	psmisc >= 20.1
 Provides:	crontabs >= 1.7
 Provides:	crondaemon
+Provides:	group(crontab)
 Obsoletes:	crontabs
 Obsoletes:	crondaemon
 Obsoletes:	hc-cron
-BuildRequires:	pam-devel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -175,9 +170,11 @@ vixie-cron Èí¼þ°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 ±ê×¼°æ±¾Ïà±È£¬Vixie cron ¾ßÓÐ¸ü¸ßµÄ°²È«ÐÔºÍ¹¦ÄÜ¸üÇ¿µÄÅäÖÃÑ¡Ïî¡£
 
 %prep
-%setup -q -a5
+%setup -T -c -q -a5
+/bin/sh %{SOURCE0}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p1
 %patch3 -p1
 %patch4 -p1
 %patch5 -p1
@@ -189,19 +186,11 @@ vixie-cron Èí¼þ°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 %patch11 -p1
 %patch12 -p1
 %patch13 -p1
-%patch14 -p1
-%patch15 -p1
-%patch16 -p1
-%patch17 -p1
-%patch18 -p1
-%patch19 -p1
-%patch20 -p1
-%patch21 -p1
-%patch22 -p1
+%patch14 -p0
 
 %build
 %{__make} \
-	CC=%{__cc} \
+	CC="%{__cc}" \
 	RPM_OPT_FLAGS="%{rpmcflags}" \
 	LDFLAGS="%{rpmldflags}"
 
@@ -339,15 +328,15 @@ done
 %files
 %defattr(644,root,root,755)
 %doc CHANGES CONVERSION FEATURES MAIL README THANKS
-%attr(0750,root,crontab) %dir %{_sysconfdir}/cron*
-%attr(0644,root,crontab) %config(noreplace) /etc/cron.d/crontab
-%attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
-%attr(0640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
-%attr(0640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
-%config(noreplace) %verify(not md5 size mtime) /etc/pam.d/cron
-%attr(0754,root,root) /etc/rc.d/init.d/crond
-%config /etc/logrotate.d/cron
-%attr(0755,root,root) %{_sbindir}/crond
+%attr(750,root,crontab) %dir %{_sysconfdir}/cron*
+%attr(640,root,crontab) %config(noreplace,missingok) /etc/cron.d/crontab
+%attr(640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.allow
+%attr(640,root,crontab) %config(noreplace,missingok) %verify(not md5 mtime size) %{_sysconfdir}/cron/cron.deny
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/cron
+%config(noreplace) %verify(not md5 mtime size) /etc/pam.d/cron
+%attr(754,root,root) /etc/rc.d/init.d/crond
+%attr(640,root,root) %config(noreplace) %verify(not md5 mtime size) /etc/logrotate.d/cron
+%attr(755,root,root) %{_sbindir}/crond
 %attr(2755,root,crontab) %{_bindir}/crontab
 
 %{_mandir}/man*/*
@@ -359,4 +348,4 @@ done
 %lang(pl) %{_mandir}/pl/man*/*
 
 %attr(1730,root,crontab) /var/spool/cron
-%attr(0660,root,crontab) %ghost /var/log/cron
+%attr(660,root,crontab) %ghost /var/log/cron
