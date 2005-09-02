@@ -21,7 +21,7 @@ Summary(uk):	Vixie cron - ÄÅÍÏÎ, İÏ ÚÁĞÕÓËÁ¤ ĞÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ĞĞÖ¸¶¨³ÌĞòµÄ Vixie cron ºóÌ¨³ÌĞò¡£
 Name:		vixie-cron
 Version:	4.1
-Release:	2
+Release:	2.1
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.isc.org/isc/cron/cron_%{version}.shar
@@ -36,18 +36,17 @@ Source6:	%{name}.pam
 Patch0:		%{name}-pld.patch
 Patch1:		%{name}-sprintf.patch
 Patch2:		%{name}-sigchld2.patch
-Patch3:		%{name}-crond.patch
-Patch4:		%{name}-manpages.patch
-Patch5:		%{name}-name.patch
+Patch3:		%{name}-crontab.patch
+Patch4:		%{name}-crond.patch
+Patch5:		%{name}-manpages.patch
 Patch6:		%{name}-security3.patch
 Patch7:		%{name}-noroot.patch
 Patch8:		%{name}-pam.patch
-Patch9:		%{name}-sgid-crontab.patch
-Patch10:	%{name}-foreground.patch
-Patch11:	%{name}-fd0open.patch
-Patch12:	%{name}-CAN-2005-1038.patch
-Patch13:	%{name}-nodebug.patch
-Patch14:	%{name}-syslog-facility.patch
+Patch9:		%{name}-foreground.patch
+Patch10:	%{name}-fd0open.patch
+Patch11:	%{name}-CAN-2005-1038.patch
+Patch12:	%{name}-nodebug.patch
+Patch13:	%{name}-syslog-facility.patch
 BuildRequires:	pam-devel
 PreReq:		rc-scripts
 Requires(pre):	/usr/bin/getgid
@@ -185,8 +184,7 @@ vixie-cron Èí¼ş°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 %patch10 -p1
 %patch11 -p1
 %patch12 -p1
-%patch13 -p1
-%patch14 -p0
+%patch13 -p0
 
 %build
 %{__make} \
