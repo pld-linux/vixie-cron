@@ -1,6 +1,6 @@
-diff -uNr vixie-cron-4.1.p0/do_command.c vixie-cron-4.1/do_command.c
---- vixie-cron-4.1.p0/do_command.c	2005-07-23 12:40:31.000000000 +0200
-+++ vixie-cron-4.1/do_command.c	2005-07-24 21:57:56.000000000 +0200
+diff -ur vixie.orig/do_command.c vixie/do_command.c
+--- vixie.orig/do_command.c	2005-09-01 20:26:31.000000000 +0200
++++ vixie/do_command.c	2005-09-01 22:43:36.000000000 +0200
 @@ -412,7 +412,7 @@
  					fprintf(stderr, "mailcmd too long\n");
  					(void) _exit(ERROR_EXIT);
@@ -19,9 +19,9 @@ diff -uNr vixie-cron-4.1.p0/do_command.c vixie-cron-4.1/do_command.c
  			"mailed %d byte%s of output but got status 0x%04x\n",
  					bytes, (bytes==1)?"":"s",
  					status);
-diff -uNr vixie-cron-4.1.p0/misc.c vixie-cron-4.1/misc.c
---- vixie-cron-4.1.p0/misc.c	2005-07-23 12:40:31.000000000 +0200
-+++ vixie-cron-4.1/misc.c	2005-07-24 22:15:24.000000000 +0200
+diff -ur vixie.orig/misc.c vixie/misc.c
+--- vixie.orig/misc.c	2005-09-01 20:26:31.000000000 +0200
++++ vixie/misc.c	2005-09-01 22:53:45.000000000 +0200
 @@ -290,7 +290,7 @@
  		pidfile = _PATH_CRON_PID;
  		/* Initial mode is 0600 to prevent flock() race/DoS. */
@@ -50,12 +50,21 @@ diff -uNr vixie-cron-4.1.p0/misc.c vixie-cron-4.1/misc.c
  				pidfile, otherpid, strerror(save_errno));
  			fprintf(stderr, "%s: %s\n", ProgramName, buf);
  			log_it("CRON", getpid(), "DEATH", buf);
-@@ -473,16 +473,18 @@
+@@ -322,7 +322,7 @@
+ 		(void) fcntl(fd, F_SETFD, 1);
+ 	}
+ 
+-	sprintf(buf, "%ld\n", (long)getpid());
++	snprintf(buf, MAX_TEMPSTR, "%ld\n", (long)getpid());
+ 	(void) lseek(fd, (off_t)0, SEEK_SET);
+ 	num = write(fd, buf, strlen(buf));
+ 	(void) ftruncate(fd, num);
+@@ -473,16 +473,19 @@
  	TIME_T now = time((TIME_T) 0);
  	struct tm *t = localtime(&now);
  #endif /*LOG_FILE*/
--
-+	int msg_size;
++	int 			msg_size;
+ 
  #if defined(LOG_FILE)
  	/* we assume that MAX_TEMPSTR will hold the date, time, &punctuation.
  	 */
@@ -64,18 +73,19 @@ diff -uNr vixie-cron-4.1.p0/misc.c vixie-cron-4.1/misc.c
 -		     + strlen(detail)
 -		     + MAX_TEMPSTR);
 -	if (msg == NULL)
+-		return;
 +	msg_size = strlen(username) + strlen(event) + strlen(detail) + MAX_TEMPSTR;
 +	msg = malloc(msg_size);
 +	if (msg == NULL) {
-+		/* damn, out of mem and we did not test that before... */
-+		fprintf(stderr, "%s: Run OUT OF MEMORY while %s\n",
-+			ProgramName, __FUNCTION__);
- 		return;
++	    /* damn, out of mem and we did not test that before... */
++	    fprintf(stderr, "%s: Run OUT OF MEMORY while %s\n",
++		    ProgramName, __FUNCTION__);
++	    return;
 +	}
  
  	if (LogFD < OK) {
  		LogFD = open(LOG_FILE, O_WRONLY|O_APPEND|O_CREAT, 0600);
-@@ -495,16 +497,16 @@
+@@ -495,16 +498,16 @@
  		}
  	}
  
@@ -95,23 +105,33 @@ diff -uNr vixie-cron-4.1.p0/misc.c vixie-cron-4.1/misc.c
  	 */
  	if (LogFD < OK || write(LogFD, msg, strlen(msg)) < OK) {
  		if (LogFD >= OK)
-@@ -612,7 +614,9 @@
+@@ -515,7 +518,6 @@
+ 
+ 	free(msg);
+ #endif /*LOG_FILE*/
+-
+ #if defined(SYSLOG)
+ 	if (!syslog_open) {
+ # ifdef LOG_DAEMON
+@@ -612,8 +614,10 @@
  			*dst++ = '^';
  			*dst++ = '?';
  		} else {			/* parity character */
 -			sprintf(dst, "\\%03o", ch);
-+			/* well, the following snprintf is paranoid,  but that will
-+			 * keep grep happy */
-+			snprintf(dst, 5, "\\%03o", ch);
- 			dst += 4;
+-			dst += 4;
++		    /* well, the following snprintf is paranoid, but that will
++		     * keep grep happy */
++		    snprintf(dst, 5, "\\%03o", ch);
++		    dst += 4;
  		}
  	}
+ 	*dst = '\0';
 @@ -650,7 +654,7 @@
  	int minutes = (gmtoff - (hours * SECONDS_PER_HOUR)) / SECONDS_PER_MINUTE;
  	static char ret[64];	/* zone name might be >3 chars */
  	
 -	(void) sprintf(ret, "%s, %2d %s %2d %02d:%02d:%02d %.2d%.2d (%s)",
-+	(void) snprintf(ret, 30, "%s, %2d %s %2d %02d:%02d:%02d %.2d%.2d (%s)",
++	(void) snprintf(ret, 64, "%s, %2d %s %2d %02d:%02d:%02d %.2d%.2d (%s)",
  		       DowNames[tm.tm_wday],
  		       tm.tm_mday,
  		       MonthNames[tm.tm_mon],

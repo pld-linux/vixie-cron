@@ -1,6 +1,6 @@
-diff -uNr vixie-cron-4.1.p7/cron.8 vixie-cron-4.1/cron.8
---- vixie-cron-4.1.p7/cron.8	2005-07-24 00:11:24.000000000 +0200
-+++ vixie-cron-4.1/cron.8	2005-07-24 22:34:43.000000000 +0200
+diff -ur vixie.orig/cron.8 vixie/cron.8
+--- vixie.orig/cron.8	2005-09-01 22:06:02.000000000 +0200
++++ vixie/cron.8	2005-09-02 08:32:11.000000000 +0200
 @@ -39,7 +39,8 @@
  searches /var/spool/cron for crontab files which are named after accounts in
  /etc/passwd; crontabs found are loaded into memory.
@@ -11,9 +11,9 @@ diff -uNr vixie-cron-4.1.p7/cron.8 vixie-cron-4.1/cron.8
  .IR crontab (5)).
  .I Cron
  then wakes up every minute, examining all stored crontabs, checking each
-diff -uNr vixie-cron-4.1.p7/database.c vixie-cron-4.1/database.c
---- vixie-cron-4.1.p7/database.c	2005-07-23 12:40:31.000000000 +0200
-+++ vixie-cron-4.1/database.c	2005-07-24 22:39:30.000000000 +0200
+diff -ur vixie.orig/database.c vixie/database.c
+--- vixie.orig/database.c	2005-09-01 22:40:02.000000000 +0200
++++ vixie/database.c	2005-09-02 08:52:37.000000000 +0200
 @@ -36,7 +36,7 @@
  
  void
@@ -31,7 +31,7 @@ diff -uNr vixie-cron-4.1.p7/database.c vixie-cron-4.1/database.c
 +		log_it("CRON", getpid(), "STAT FAILED", "/etc/cron.d");
 +		(void) exit(ERROR_EXIT);
 +	}
-+	
++
  	/* track system crontab file
  	 */
  	if (stat(SYSCRONTAB, &syscron_stat) < OK)
@@ -41,7 +41,7 @@ diff -uNr vixie-cron-4.1.p7/database.c vixie-cron-4.1/database.c
  	 */
 -	if (old_db->mtime == TMAX(statbuf.st_mtime, syscron_stat.st_mtime)) {
 +	if (old_db->mtime == TMAX(crond_stat.st_mtime,
-+					TMAX(statbuf.st_mtime, syscron_stat.st_mtime))) {
++				TMAX(statbuf.st_mtime, syscron_stat.st_mtime))) {
  		Debug(DLOAD, ("[%ld] spool dir mtime unch, no load needed.\n",
  			      (long)getpid()))
  		return;
@@ -51,7 +51,7 @@ diff -uNr vixie-cron-4.1.p7/database.c vixie-cron-4.1/database.c
  	 */
 -	new_db.mtime = TMAX(statbuf.st_mtime, syscron_stat.st_mtime);
 +	new_db.mtime = TMAX(crond_stat.st_mtime,
-+					TMAX(statbuf.st_mtime, syscron_stat.st_mtime));
++			    TMAX(statbuf.st_mtime, syscron_stat.st_mtime));
  	new_db.head = new_db.tail = NULL;
  
  	if (syscron_stat.st_mtime)
@@ -80,7 +80,7 @@ diff -uNr vixie-cron-4.1.p7/database.c vixie-cron-4.1/database.c
 +		if (dp->d_name[ln-1] == '~')
 +			continue;
 +
-+		/* ignore *.rpmnew and *.rpmsave files */
++		/* ignore *.rpmnew, *.rpmsave and *.rpmorig files */
 +		if ((ln > 7 && strstr(&dp->d_name[ln-7], ".rpmnew")) ||
 +			(ln > 8 && strstr(&dp->d_name[ln-8], ".rpmsave")) ||
 +			(ln > 8 && strstr(&dp->d_name[ln-8], ".rpmorig")))
@@ -97,7 +97,7 @@ diff -uNr vixie-cron-4.1.p7/database.c vixie-cron-4.1/database.c
  	/* we used to keep this dir open all the time, for the sake of
  	 * efficiency.  however, we need to close it in every fork, and
  	 * we fork a lot more often than the mtime of the dir changes.
-@@ -263,7 +263,7 @@
+@@ -206,7 +249,7 @@
  		log_it(fname, getpid(), "NOT REGULAR", tabname);
  		goto next_crontab;
  	}
@@ -106,9 +106,9 @@ diff -uNr vixie-cron-4.1.p7/database.c vixie-cron-4.1/database.c
  		log_it(fname, getpid(), "BAD FILE MODE", tabname);
  		goto next_crontab;
  	}
-diff -uNr vixie-cron-4.1.p7/FEATURES vixie-cron-4.1/FEATURES
---- vixie-cron-4.1.p7/FEATURES	2005-07-23 12:40:30.000000000 +0200
-+++ vixie-cron-4.1/FEATURES	2005-07-24 22:35:17.000000000 +0200
+diff -ur vixie.orig/FEATURES vixie/FEATURES
+--- vixie.orig/FEATURES	2005-09-01 20:26:31.000000000 +0200
++++ vixie/FEATURES	2005-09-02 08:28:47.000000000 +0200
 @@ -82,3 +82,8 @@
  	act this way and do the more reasonable thing, which is (IMHO) to "or"
  	the various field-matches together.  In that sense this cron may not

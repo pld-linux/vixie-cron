@@ -1,6 +1,6 @@
-diff -uNr vixie-cron-4.1.p20/do_command.c vixie-cron-4.1/do_command.c
---- vixie-cron-4.1.p20/do_command.c	2005-07-24 23:13:19.000000000 +0200
-+++ vixie-cron-4.1/do_command.c	2005-07-24 23:41:34.000000000 +0200
+diff -ur vixie.orig/do_command.c vixie/do_command.c
+--- vixie.orig/do_command.c	2005-09-02 08:59:14.000000000 +0200
++++ vixie/do_command.c	2005-09-02 09:42:17.000000000 +0200
 @@ -25,6 +25,17 @@
  
  #include "cron.h"
@@ -8,8 +8,8 @@ diff -uNr vixie-cron-4.1.p20/do_command.c vixie-cron-4.1/do_command.c
 +#include <security/pam_appl.h>
 +static pam_handle_t *pamh = NULL;
 +static const struct pam_conv conv = {
-+	NULL
-+};
++    NULL
++    };
 +#define PAM_FAIL_CHECK if (retcode != PAM_SUCCESS) { \
 +	fprintf(stderr,"\n%s\n",pam_strerror(pamh, retcode)); \
 +	syslog(LOG_ERR,"%s",pam_strerror(pamh, retcode)); \
@@ -27,7 +27,7 @@ diff -uNr vixie-cron-4.1.p20/do_command.c vixie-cron-4.1/do_command.c
  
  	Debug(DPROC, ("[%ld] child_process('%s')\n", (long)getpid(), e->cmd))
  
-@@ -135,6 +147,15 @@
+@@ -134,6 +146,15 @@
  		*p = '\0';
  	}
  
@@ -43,9 +43,11 @@ diff -uNr vixie-cron-4.1.p20/do_command.c vixie-cron-4.1/do_command.c
  	/* fork again, this time so we can exec the user's command.
  	 */
  	switch (vfork()) {
-@@ -516,6 +537,9 @@
+@@ -513,7 +534,11 @@
+ 		if (WIFSIGNALED(waiter) && WCOREDUMP(waiter))
  			Debug(DPROC, (", dumped core"))
  		Debug(DPROC, ("\n"))
++ 
  	}
 +	pam_setcred(pamh, PAM_DELETE_CRED | PAM_SILENT);
 +	retcode = pam_close_session(pamh, PAM_SILENT);
@@ -53,9 +55,9 @@ diff -uNr vixie-cron-4.1.p20/do_command.c vixie-cron-4.1/do_command.c
  }
  
  static int
-diff -uNr vixie-cron-4.1.p20/Makefile vixie-cron-4.1/Makefile
---- vixie-cron-4.1.p20/Makefile	2005-07-24 00:05:03.000000000 +0200
-+++ vixie-cron-4.1/Makefile	2005-07-24 23:37:58.000000000 +0200
+diff -ur vixie.orig/Makefile vixie/Makefile
+--- vixie.orig/Makefile	2005-09-01 22:17:26.000000000 +0200
++++ vixie/Makefile	2005-09-02 09:38:53.000000000 +0200
 @@ -59,7 +59,7 @@
  INCLUDE		=	-I.
  #INCLUDE	=
@@ -65,12 +67,3 @@ diff -uNr vixie-cron-4.1.p20/Makefile vixie-cron-4.1/Makefile
  #<<optimize or debug?>>
  CDEBUG		=	$(RPM_OPT_FLAGS)
  #CDEBUG		=	-g
-@@ -68,7 +68,7 @@
- #<<want to use a nonstandard CC?>>
- CC		=	gcc -Wall -Wno-unused -Wno-comment
- #<<manifest defines>>
--DEFS		=	-s
-+DEFS		=	
- #(SGI IRIX systems need this)
- #DEFS		=	-D_BSD_SIGNALS -Dconst=
- #<<the name of the BSD-like install program>>

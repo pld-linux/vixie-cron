@@ -1,6 +1,6 @@
-diff -uNr vixie-cron-4.1.p22/cron.c vixie-cron-4.1/cron.c
---- vixie-cron-4.1.p22/cron.c	2005-07-23 12:40:30.000000000 +0200
-+++ vixie-cron-4.1/cron.c	2005-07-24 23:59:50.000000000 +0200
+diff -u vixie.orig/cron.c vixie/cron.c
+--- vixie.orig/cron.c	2005-09-02 12:24:57.000000000 +0200
++++ vixie/cron.c	2005-09-02 12:25:28.000000000 +0200
 @@ -110,7 +110,7 @@
  			break;
  		case 0:
@@ -10,9 +10,9 @@ diff -uNr vixie-cron-4.1.p22/cron.c vixie-cron-4.1/cron.c
  			if ((fd = open(_PATH_DEVNULL, O_RDWR, 0)) >= 0) {
  				(void) dup2(fd, STDIN);
  				(void) dup2(fd, STDOUT);
-diff -uNr vixie-cron-4.1.p22/database.c vixie-cron-4.1/database.c
---- vixie-cron-4.1.p22/database.c	2005-07-24 23:50:09.000000000 +0200
-+++ vixie-cron-4.1/database.c	2005-07-25 00:22:09.000000000 +0200
+diff -u vixie.orig/database.c vixie/database.c
+--- vixie.orig/database.c	2005-09-02 12:24:57.000000000 +0200
++++ vixie/database.c	2005-09-02 12:25:28.000000000 +0200
 @@ -28,6 +28,15 @@
  
  #include "cron.h"
@@ -38,7 +38,7 @@ diff -uNr vixie-cron-4.1.p22/database.c vixie-cron-4.1/database.c
  	} else if ((pw = getpwnam(uname)) == NULL) {
  		/* file doesn't have a user in passwd file.
  		 */
-@@ -293,6 +302,60 @@
+@@ -288,6 +297,59 @@
  		free_user(u);
  		log_it(fname, getpid(), "RELOAD", tabname);
  	}
@@ -56,7 +56,7 @@ diff -uNr vixie-cron-4.1.p22/database.c vixie-cron-4.1/database.c
 +	    } else {
 +		log_it(fname, getpid(), "getfilecon FAILED but SELinux in permissive mode, continuing", tabname);
 +		goto selinux_out;
-+	    }		
++	    }
 +	  }
 +
 +	  /*
@@ -68,12 +68,12 @@ diff -uNr vixie-cron-4.1.p22/database.c vixie-cron-4.1/database.c
 +	   */
 +	  if (get_default_context(fname, NULL, &user_context)) {
 +	    freecon(file_context);
-+		if (security_getenforce() > 0) {
-+			log_it(fname, getpid(), "NO CONTEXT", tabname);
-+			goto next_crontab;
++	    if (security_getenforce() > 0) {
++		log_it(fname, getpid(), "NO CONTEXT", tabname);
++		goto next_crontab;
 +	    } else {
-+			log_it(fname, getpid(), "NO CONTEXT but SELinux in permissive mode, continuing", tabname);
-+			goto selinux_out;
++		log_it(fname, getpid(), "NO CONTEXT but SELinux in permissive mode, continuing", tabname);
++		goto selinux_out;
 +	    }
 +	  }
 +	  retval = security_compute_av(user_context,
@@ -93,15 +93,14 @@ diff -uNr vixie-cron-4.1.p22/database.c vixie-cron-4.1/database.c
 +	    }
 +	  }
 +selinux_out:
-+		((void)0);
 +	}
 +#endif
  	u = load_user(crontab_fd, pw, fname);
  	if (u != NULL) {
  		u->mtime = statbuf->st_mtime;
-diff -uNr vixie-cron-4.1.p22/do_command.c vixie-cron-4.1/do_command.c
---- vixie-cron-4.1.p22/do_command.c	2005-07-25 00:07:52.000000000 +0200
-+++ vixie-cron-4.1/do_command.c	2005-07-25 00:21:27.000000000 +0200
+diff -u vixie.orig/do_command.c vixie/do_command.c
+--- vixie.orig/do_command.c	2005-09-02 12:24:57.000000000 +0200
++++ vixie/do_command.c	2005-09-02 12:27:57.000000000 +0200
 @@ -23,6 +23,10 @@
  static char rcsid[] = "$Id$";
  #endif
@@ -113,35 +112,35 @@ diff -uNr vixie-cron-4.1.p22/do_command.c vixie-cron-4.1/do_command.c
  #include "cron.h"
  
  #include <security/pam_appl.h>
-@@ -295,6 +299,25 @@
- 			 */
- 			(void) signal(SIGCHLD, SIG_DFL);
- #endif /*USE_SIGCHLD*/
+@@ -293,6 +297,25 @@
+ 				_exit(OK_EXIT);
+ 			}
+ # endif /*DEBUGGING*/
 +#ifdef WITH_SELINUX
 +			if (is_selinux_enabled()>0) {
-+			  security_context_t scontext;
-+			  if (get_default_context(u->name, NULL, &scontext)) {
-+			    if (security_getenforce() > 0) {
-+    				fprintf(stderr, "execle: couldn't get security context for user %s\n", u->name); 
-+    				_exit(ERROR_EXIT);
++			    security_context_t scontext;
++			    if (get_default_context(u->name, NULL, &scontext)) {
++				if (security_getenforce() > 0) {
++				    fprintf(stderr, "execle: couldn't get security context for user %s\n", u->name);
++				    _exit(ERROR_EXIT);
++				}
++			    } else {
++				if (setexeccon(scontext) < 0) {
++				    if (security_getenforce() > 0) {
++					fprintf(stderr, "Could not set exec context to %s for user  %s\n", scontext,u->name);
++					_exit(ERROR_EXIT);
++				    }
++				}
++			    freecon(scontext);
 +			    }
-+			  } else {
-+    			      if (setexeccon(scontext) < 0) {
-+				  if (security_getenforce() > 0) {
-+				      fprintf(stderr, "Could not set exec context to %s for user  %s\n", scontext,u->name);
-+    				      _exit(ERROR_EXIT);
-+				  }
-+    			      }
-+    			      freecon(scontext);
-+			  }
-+			 }
-+#endif /*WITH_SELINUX*/
++			}
++#endif
  			execle(shell, shell, "-c", e->cmd, (char *)0, e->envp);
  			fprintf(stderr, "execl: couldn't exec `%s'\n", shell);
  			perror("execl");
-diff -uNr vixie-cron-4.1.p22/Makefile vixie-cron-4.1/Makefile
---- vixie-cron-4.1.p22/Makefile	2005-07-24 23:37:58.000000000 +0200
-+++ vixie-cron-4.1/Makefile	2005-07-25 00:00:34.000000000 +0200
+diff -u vixie.orig/Makefile vixie/Makefile
+--- vixie.orig/Makefile	2005-09-02 12:24:57.000000000 +0200
++++ vixie/Makefile	2005-09-02 12:25:28.000000000 +0200
 @@ -59,7 +59,7 @@
  INCLUDE		=	-I.
  #INCLUDE	=
@@ -155,7 +154,7 @@ diff -uNr vixie-cron-4.1.p22/Makefile vixie-cron-4.1/Makefile
  #<<want to use a nonstandard CC?>>
  CC		=	gcc -Wall -Wno-unused -Wno-comment
  #<<manifest defines>>
--DEFS		=	
+-DEFS		=
 +DEFS		=	-DWITH_SELINUX
  #(SGI IRIX systems need this)
  #DEFS		=	-D_BSD_SIGNALS -Dconst=
