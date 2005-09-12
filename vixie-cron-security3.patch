@@ -1,0 +1,46 @@
+diff -ur vixie.orig/crontab.c vixie/crontab.c
+--- vixie.orig/crontab.c	2005-09-01 22:40:02.000000000 +0200
++++ vixie/crontab.c	2005-09-02 09:28:05.000000000 +0200
+@@ -132,8 +132,14 @@
+ 		fprintf(stderr, "username too long\n");
+ 		exit(ERROR_EXIT);
+ 	}
+-	strcpy(User, pw->pw_name);
+-	strcpy(RealUser, User);
++	if (strlen (pw->pw_name) >= sizeof(User)) {
++		fprintf(stderr, "crontab: fatal: username too long\n");
++		exit(ERROR_EXIT);
++	}
++	memset(User,0,MAX_UNAME);
++	memset(RealUser,0,MAX_UNAME);
++	strncpy(User, pw->pw_name, MAX_UNAME - 1);
++	strncpy(RealUser, User, MAX_UNAME - 1);
+ 	Filename[0] = '\0';
+ 	Option = opt_unknown;
+ 	while (-1 != (argch = getopt(argc, argv, getoptargs))) {
+@@ -157,7 +163,7 @@
+ 			}
+ 			if (strlen(optarg) >= sizeof User)
+ 				usage("username too long");
+-			(void) strcpy(User, optarg);
++			(void) strncpy(User, optarg, MAX_UNAME - 1);
+ 			break;
+ 		case 'l':
+ 			if (Option != opt_unknown)
+diff -ur vixie.orig/macros.h vixie/macros.h
+--- vixie.orig/macros.h	2005-09-01 20:26:31.000000000 +0200
++++ vixie/macros.h	2005-09-02 09:31:47.000000000 +0200
+@@ -48,7 +48,12 @@
+ #define	MAX_COMMAND	1000	/* max length of internally generated cmd */
+ #define	MAX_ENVSTR	1000	/* max length of envvar=value\0 strings */
+ #define	MAX_TEMPSTR	100	/* obvious */
+-#define	MAX_UNAME	33	/* max length of username, should be overkill */
++#if defined(__GLIBC__) && ( __GLIBC__ >= 2 )
++#include <utmpx.h>
++#define MAX_UNAME	__UT_NAMESIZE
++#else
++#define	MAX_UNAME	32      /* max length of username, should be overkill */
++#endif
+ #define	ROOT_UID	0	/* don't change this, it really must be root */
+ #define	ROOT_USER	"root"	/* ditto */
+ 

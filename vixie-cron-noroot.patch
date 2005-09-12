@@ -1,0 +1,34 @@
+diff -ur vixie.orig/crontab.c vixie/crontab.c
+--- vixie.orig/crontab.c	2005-09-02 10:08:01.000000000 +0200
++++ vixie/crontab.c	2005-09-02 10:08:56.000000000 +0200
+@@ -293,7 +293,7 @@
+ edit_cmd(void) {
+ 	char n[MAX_FNAME], q[MAX_TEMPSTR], *editor;
+ 	FILE *f;
+-	int ch, t, x;
++	int ch, t, x, saved_uid;
+ 	struct stat statbuf;
+ 	struct utimbuf utimebuf;
+ 	WAIT_T waiter;
+@@ -382,6 +382,12 @@
+ 		exit(ERROR_EXIT);
+ 	}
+ 	utime(Filename, &utimebuf);
++	/* Do not move this statement! */
++	saved_uid = getuid();
++	if (saved_uid < 0) {
++		perror("getuid");
++		exit(ERROR_EXIT);
++	}
+  again:
+ 	rewind(NewCrontab);
+ 	if (ferror(NewCrontab)) {
+@@ -415,7 +421,7 @@
+ 			perror("setgid(getgid())");
+ 			exit(ERROR_EXIT);
+ 		}
+-		if (setuid(MY_UID(pw)) < 0) {
++		if (setuid(saved_uid) < 0) {
+ 			perror("setuid(getuid())");
+ 			exit(ERROR_EXIT);
+ 		}

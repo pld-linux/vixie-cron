@@ -1,0 +1,12 @@
+diff -ur vixie.orig/misc.c vixie/misc.c
+--- vixie.orig/misc.c	2005-09-12 11:09:55.000000000 +0200
++++ vixie/misc.c	2005-09-12 12:01:51.270399680 +0200
+@@ -680,7 +680,7 @@
+ }
+ 
+ int swap_uids_back(void) {
+-	return ((setegid(getgid()) || seteuid(getuid())) ? -1 : 0);
++	return ((setegid(save_egid) || seteuid(save_euid)) ? -1 : 0);
+ }
+ 
+ #else /*HAVE_SAVED_UIDS*/

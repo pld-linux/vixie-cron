@@ -1,0 +1,52 @@
+diff -u vixie.orig/crontab.c vixie/crontab.c
+--- vixie.orig/crontab.c	2005-09-02 09:37:24.000000000 +0200
++++ vixie/crontab.c	2005-09-02 12:23:06.000000000 +0200
+@@ -471,17 +471,45 @@
+ 	}
+ 	(void)signal(SIGHUP, SIG_DFL);
+ 	(void)signal(SIGINT, SIG_DFL);
+-	(void)signal(SIGQUIT, SIG_DFL);
+-	if (fstat(t, &statbuf) < 0) {
+-		perror("fstat");
++	(void)signal(SIGQUIT, SIG_DFL);      
++
++	if (lstat(Filename, &statbuf) < 0) {
++		perror("lstat");
+ 		goto fatal;
+ 	}
++
++	if ( !S_ISREG(statbuf.st_mode) )
++	{
++	    fprintf(stderr, "%s: illegal crontab\n",
++			ProgramName);
++		goto remove;	    
++	}
++
+ 	if (utimebuf.modtime == statbuf.st_mtime) {
+ 		fprintf(stderr, "%s: no changes made to crontab\n",
+ 			ProgramName);
+ 		goto remove;
+ 	}
++
+ 	fprintf(stderr, "%s: installing new crontab\n", ProgramName);
++	fclose(NewCrontab);
++	if (swap_uids() < OK) {
++	    perror("swapping uids");
++	    goto remove;
++	}
++	if (!(NewCrontab = fopen(Filename, "r+"))) {
++	    perror("cannot read new crontab");
++	    goto remove;	    
++	}
++	if (swap_uids_back() < OK) {
++	    perror("swapping uids back");
++	    exit(ERROR_EXIT);
++	}
++	if( NewCrontab == 0L )
++	{
++	    perror("fopen");
++	    goto fatal;
++	}
+ 	switch (replace_cmd()) {
+ 	case 0:
+ 		break;

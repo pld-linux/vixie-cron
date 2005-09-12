@@ -1,0 +1,123 @@
+diff -ur vixie.orig/cron.8 vixie/cron.8
+--- vixie.orig/cron.8	2005-09-01 22:06:02.000000000 +0200
++++ vixie/cron.8	2005-09-02 08:32:11.000000000 +0200
+@@ -39,7 +39,8 @@
+ searches /var/spool/cron for crontab files which are named after accounts in
+ /etc/passwd; crontabs found are loaded into memory.
+ .I Cron
+-also searches for /etc/crontab which is in a different format (see
++also searches for /etc/cron.d/crontab and the files in the /etc/cron.d/ directory,
++which are in a different format (see
+ .IR crontab (5)).
+ .I Cron
+ then wakes up every minute, examining all stored crontabs, checking each
+diff -ur vixie.orig/database.c vixie/database.c
+--- vixie.orig/database.c	2005-09-01 22:40:02.000000000 +0200
++++ vixie/database.c	2005-09-02 08:52:37.000000000 +0200
+@@ -36,7 +36,7 @@
+ 
+ void
+ load_database(cron_db *old_db) {
+-	struct stat statbuf, syscron_stat;
++	struct stat statbuf, syscron_stat, crond_stat;
+ 	cron_db new_db;
+ 	DIR_T *dp;
+ 	DIR *dir;
+@@ -53,6 +53,11 @@
+ 		(void) exit(ERROR_EXIT);
+ 	}
+ 
++	if (stat("/etc/cron.d", &crond_stat) < OK) {
++		log_it("CRON", getpid(), "STAT FAILED", "/etc/cron.d");
++		(void) exit(ERROR_EXIT);
++	}
++
+ 	/* track system crontab file
+ 	 */
+ 	if (stat(SYSCRONTAB, &syscron_stat) < OK)
+@@ -65,7 +70,8 @@
+ 	 * so is guaranteed to be different than the stat() mtime the first
+ 	 * time this function is called.
+ 	 */
+-	if (old_db->mtime == TMAX(statbuf.st_mtime, syscron_stat.st_mtime)) {
++	if (old_db->mtime == TMAX(crond_stat.st_mtime,
++				TMAX(statbuf.st_mtime, syscron_stat.st_mtime))) {
+ 		Debug(DLOAD, ("[%ld] spool dir mtime unch, no load needed.\n",
+ 			      (long)getpid()))
+ 		return;
+@@ -76,13 +82,50 @@
+ 	 * actually changed.  Whatever is left in the old database when
+ 	 * we're done is chaff -- crontabs that disappeared.
+ 	 */
+-	new_db.mtime = TMAX(statbuf.st_mtime, syscron_stat.st_mtime);
++	new_db.mtime = TMAX(crond_stat.st_mtime,
++			    TMAX(statbuf.st_mtime, syscron_stat.st_mtime));
+ 	new_db.head = new_db.tail = NULL;
+ 
+ 	if (syscron_stat.st_mtime)
+ 		process_crontab("root", NULL, SYSCRONTAB, &syscron_stat,
+ 				&new_db, old_db);
+ 
++	if (!(dir = opendir("/etc/cron.d"))) {
++		log_it("CRON", getpid(), "OPENDIR FAILED", "/etc/cron.d");
++		(void) exit(ERROR_EXIT);
++	}
++
++	while (NULL != (dp = readdir(dir))) {
++		char	fname[MAXNAMLEN+1],
++			tabname[MAXNAMLEN+1];
++		int ln = strlen(dp->d_name);
++
++		/* avoid file names beginning with ".".  this is good
++		 * because we would otherwise waste two guaranteed calls
++		 * to getpwnam() for . and .., and there shouldn't be 
++		 * hidden files in here anyway
++		 */
++		if ((dp->d_name[0] == '.') || (dp->d_name[0] == '#'))
++			continue;
++
++		/* ignore files ending with ~ */
++		if (dp->d_name[ln-1] == '~')
++			continue;
++
++		/* ignore *.rpmnew, *.rpmsave and *.rpmorig files */
++		if ((ln > 7 && strstr(&dp->d_name[ln-7], ".rpmnew")) ||
++			(ln > 8 && strstr(&dp->d_name[ln-8], ".rpmsave")) ||
++			(ln > 8 && strstr(&dp->d_name[ln-8], ".rpmorig")))
++			continue;
++
++		(void) strcpy(fname, dp->d_name);
++		snprintf(tabname, MAXNAMLEN+1, "/etc/cron.d/%s", fname);
++
++		process_crontab("root", NULL, tabname,
++				&crond_stat, &new_db, old_db);
++	}
++	closedir(dir);
++
+ 	/* we used to keep this dir open all the time, for the sake of
+ 	 * efficiency.  however, we need to close it in every fork, and
+ 	 * we fork a lot more often than the mtime of the dir changes.
+@@ -206,7 +249,10 @@
+ 		log_it(fname, getpid(), "NOT REGULAR", tabname);
+ 		goto next_crontab;
+ 	}
+-	if ((statbuf->st_mode & 07777) != 0600) {
++	/* we don't want to check file mode for files in /etc/cron.d,
++	 * for such files pw will be NULL.
++	 */
++	if (pw != NULL && ((statbuf->st_mode & 07733) != 0600)) {
+ 		log_it(fname, getpid(), "BAD FILE MODE", tabname);
+ 		goto next_crontab;
+ 	}
+diff -ur vixie.orig/FEATURES vixie/FEATURES
+--- vixie.orig/FEATURES	2005-09-01 20:26:31.000000000 +0200
++++ vixie/FEATURES	2005-09-02 08:28:47.000000000 +0200
+@@ -82,3 +82,8 @@
+ 	act this way and do the more reasonable thing, which is (IMHO) to "or"
+ 	the various field-matches together.  In that sense this cron may not
+ 	be completely similar to some AT&T crons.
++
++--	If it exists, the /etc/cron.d/ directory is parsed like the cron
++	spool directory, except that the files in it are not user-specific
++	and are therefore read with /etc/cron.d/crontab syntax (the user is
++	specified explicitly in the 6th column).
