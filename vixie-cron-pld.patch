@@ -134,7 +134,7 @@ diff -ur vixie.orig/pathnames.h vixie/pathnames.h
  			 * be used.
  			 */
 -#define LOG_FILE	"log"
-+#define LOG_FILE	"/var/log/cron"
++#undef LOG_FILE
  
  			/* where should the daemon stick its PID?
  			 * PIDDIR must end in '/'.
