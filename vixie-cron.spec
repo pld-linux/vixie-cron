@@ -54,15 +54,16 @@ Patch14:	%{name}-syslog-facility.patch
 Patch15:	%{name}-saved-uids.patch
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	pam-devel
-BuildRequires:	rpmbuild(macros) >= 1.202
-PreReq:		rc-scripts
+BuildRequires:	rpmbuild(macros) >= 1.247
+Requires(post):	fileutils
+Requires(post,preun):	/sbin/chkconfig
+Requires(post,preun):	rc-scripts
+Requires(postun):	/usr/sbin/groupdel
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
-Requires(post,preun):	/sbin/chkconfig
-Requires(post):	fileutils
-Requires(postun):	/usr/sbin/groupdel
 Requires:	/bin/run-parts
 Requires:	psmisc >= 20.1
+Requires:	rc-scripts
 Provides:	crontabs >= 1.7
 Provides:	crondaemon
 Provides:	group(crontab)
@@ -255,15 +256,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add crond
-if [ -f /var/lock/subsys/crond ]; then
-	/etc/rc.d/init.d/crond restart >&2
-else
-	echo "Run \"/etc/rc.d/init.d/crond start\" to start cron daemon."
-fi
 umask 027
 touch /var/log/cron
 chgrp crontab /var/log/cron
 chmod 660 /var/log/cron
+%service crond restart "cron daemon"
 
 %preun
 if [ "$1" = "0" ]; then
