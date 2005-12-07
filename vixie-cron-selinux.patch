@@ -92,8 +92,8 @@ diff -u vixie.orig/database.c vixie/database.c
 +		goto selinux_out;
 +	    }
 +	  }
-+selinux_out:
 +	}
++selinux_out:
 +#endif
  	u = load_user(crontab_fd, pw, fname);
  	if (u != NULL) {
