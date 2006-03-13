@@ -54,7 +54,7 @@ Patch14:	%{name}-syslog-facility.patch
 Patch15:	%{name}-saved-uids.patch
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	pam-devel
-BuildRequires:	rpmbuild(macros) >= 1.247
+BuildRequires:	rpmbuild(macros) >= 1.268
 Requires(post):	fileutils
 Requires(post,preun):	/sbin/chkconfig
 Requires(post,preun):	rc-scripts
@@ -264,9 +264,7 @@ chmod 660 /var/log/cron
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/crond ]; then
-		/etc/rc.d/init.d/crond stop >&2
-	fi
+	%service crond stop
 	/sbin/chkconfig --del crond
 fi
 
