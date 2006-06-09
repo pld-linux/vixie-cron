@@ -24,7 +24,7 @@ Summary(uk):	Vixie cron - ÄÅÍÏÎ, ÝÏ ÚÁÐÕÓËÁ¤ ÐÒÏÃÅÓÉ ÚÁ ÒÏÚËÌÁÄÏÍ
 Summary(zh_CN):	ÓÃÓÚÔÚÔ¤ÉèÊ±¼äÖ´ÐÐÖ¸¶¨³ÌÐòµÄ Vixie cron ºóÌ¨³ÌÐò¡£
 Name:		vixie-cron
 Version:	4.1
-Release:	7
+Release:	8
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.isc.org/isc/cron/cron_%{version}.shar
@@ -52,6 +52,7 @@ Patch12:	%{name}-CAN-2005-1038.patch
 Patch13:	%{name}-nodebug.patch
 Patch14:	%{name}-syslog-facility.patch
 Patch15:	%{name}-saved-uids.patch
+Patch16:	%{name}-setuid_check.patch
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	pam-devel
 BuildRequires:	rpmbuild(macros) >= 1.268
@@ -64,8 +65,8 @@ Requires(pre):	/usr/sbin/groupadd
 Requires:	/bin/run-parts
 Requires:	psmisc >= 20.1
 Requires:	rc-scripts
-Provides:	crontabs >= 1.7
 Provides:	crondaemon
+Provides:	crontabs >= 1.7
 Provides:	group(crontab)
 Obsoletes:	crontabs
 Obsoletes:	fcron
@@ -196,6 +197,7 @@ vixie-cron Èí¼þ°ü°üº¬ cron µÄ Vixie °æ±¾¡£Cron ÊÇ±ê×¼µÄ UNIX
 %patch13 -p1
 %patch14 -p0
 %patch15 -p1
+%patch16 -p1
 
 %build
 %{__make} \
