@@ -37,10 +37,7 @@
 # Get service config
 [ -f /etc/sysconfig/cron ] && . /etc/sysconfig/cron
 
-RETVAL=0
-# See how we were called.
-case "$1" in
-  start)
+start() {
 	# Check if the service is already running?
 	if [ ! -f /var/lock/subsys/crond ]; then
 		msg_starting "Vixie cron"
@@ -50,8 +47,9 @@ case "$1" in
 	else
 		msg_already_running "Vixie cron"
 	fi
-	;;
-  stop)
+}
+
+stop() {
 	if [ -f /var/lock/subsys/crond ]; then
 		msg_stopping "Vixie cron"
 		killproc crond
@@ -59,15 +57,24 @@ case "$1" in
 	else
 		msg_not_running "Vixie cron"
 	fi
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
 	;;
   status)
 	status crond
 	exit $?
 	;;
   restart)
-	$0 stop
-	$0 start
-	exit $?
+	stop
+	start
 	;;
   reload|force-reload)
 	if [ -f /var/lock/subsys/crond ]; then
