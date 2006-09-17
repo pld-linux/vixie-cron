@@ -75,7 +75,7 @@ case "$1" in
 		killproc crond -HUP
 		RETVAL=$?
 	else
-		msg_not_running "Vixie cron" >&2
+		msg_not_running "Vixie cron"
 		exit 7
 	fi
 	;;
