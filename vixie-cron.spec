@@ -3,25 +3,25 @@
 %bcond_without	selinux		# without SELinux support
 #
 Summary:	The Vixie cron daemon for executing specified programs at set times
-Summary(cs.UTF-8):   Démon pro periodické spouštění zadaných programů v nastaveném čase
-Summary(da.UTF-8):   Vixie cron-dæmon for kørsel af specificerede programmer ved bestemte tider
-Summary(de.UTF-8):   Der Vixie-cron-Dämon zum Ausführen von Programmen zu bestimmten Zeiten
-Summary(es.UTF-8):   Demonio Vixie cron para ejecutar programas a horas específicas
-Summary(fr.UTF-8):   Démon vixie cron pour l'exécution de programmes spécifiés à des moments déterminés
-Summary(id.UTF-8):   Vixie cron daemon untuk menjalankan program pada waktu yang ditentukan
-Summary(is.UTF-8):   Vixie cron púkinn keyrir skilgreind forrit á ákveðnum tímum
-Summary(it.UTF-8):   Vixie: demone di cron per eseguire programmi a orari prestabiliti
-Summary(ja.UTF-8):   設定された時間に特定のプログラムを実行する Vixie cron デーモン
-Summary(nb.UTF-8):   Vixie cron-daemon for kjøring av spesifiserte programmer ved bestemte tider
-Summary(pl.UTF-8):   Demon Vixie cron uruchamiający zadane programy w określonym czasie
-Summary(pt.UTF-8):   O 'daemon' cron Vixie para executar programas indicados em alturas definidas
-Summary(ru.UTF-8):   Vixie cron - демон, запускающий процессы по расписанию
-Summary(sk.UTF-8):   Vixie cron démon na spúšťanie daných programov v určený čas
-Summary(sl.UTF-8):   Strežnik Vixie cron za izvajanje programov ob določenih časih
-Summary(sv.UTF-8):   Vixie-cron-demonen för att köra angivna program vid bestämda tider
-Summary(tr.UTF-8):   Vixie cron süreci, periyodik program çalıştırma yeteneği
-Summary(uk.UTF-8):   Vixie cron - демон, що запускає процеси за розкладом
-Summary(zh_CN.UTF-8):   用于在预设时间执行指定程序的 Vixie cron 后台程序。
+Summary(cs.UTF-8):	Démon pro periodické spouštění zadaných programů v nastaveném čase
+Summary(da.UTF-8):	Vixie cron-dæmon for kørsel af specificerede programmer ved bestemte tider
+Summary(de.UTF-8):	Der Vixie-cron-Dämon zum Ausführen von Programmen zu bestimmten Zeiten
+Summary(es.UTF-8):	Demonio Vixie cron para ejecutar programas a horas específicas
+Summary(fr.UTF-8):	Démon vixie cron pour l'exécution de programmes spécifiés à des moments déterminés
+Summary(id.UTF-8):	Vixie cron daemon untuk menjalankan program pada waktu yang ditentukan
+Summary(is.UTF-8):	Vixie cron púkinn keyrir skilgreind forrit á ákveðnum tímum
+Summary(it.UTF-8):	Vixie: demone di cron per eseguire programmi a orari prestabiliti
+Summary(ja.UTF-8):	設定された時間に特定のプログラムを実行する Vixie cron デーモン
+Summary(nb.UTF-8):	Vixie cron-daemon for kjøring av spesifiserte programmer ved bestemte tider
+Summary(pl.UTF-8):	Demon Vixie cron uruchamiający zadane programy w określonym czasie
+Summary(pt.UTF-8):	O 'daemon' cron Vixie para executar programas indicados em alturas definidas
+Summary(ru.UTF-8):	Vixie cron - демон, запускающий процессы по расписанию
+Summary(sk.UTF-8):	Vixie cron démon na spúšťanie daných programov v určený čas
+Summary(sl.UTF-8):	Strežnik Vixie cron za izvajanje programov ob določenih časih
+Summary(sv.UTF-8):	Vixie-cron-demonen för att köra angivna program vid bestämda tider
+Summary(tr.UTF-8):	Vixie cron süreci, periyodik program çalıştırma yeteneği
+Summary(uk.UTF-8):	Vixie cron - демон, що запускає процеси за розкладом
+Summary(zh_CN.UTF-8):	用于在预设时间执行指定程序的 Vixie cron 后台程序。
 Name:		vixie-cron
 Version:	4.1
 Release:	13
