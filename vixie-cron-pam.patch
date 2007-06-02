@@ -11,8 +11,8 @@ diff -ur vixie.orig/do_command.c vixie/do_command.c
 +    NULL
 +    };
 +#define PAM_FAIL_CHECK if (retcode != PAM_SUCCESS) { \
-+	fprintf(stderr,"\n%s\n",pam_strerror(pamh, retcode)); \
-+	syslog(LOG_ERR,"%s",pam_strerror(pamh, retcode)); \
++	fprintf(stderr,"\nPAM ERROR: %s\n",pam_strerror(pamh, retcode)); \
++	syslog(LOG_ERR,"PAM ERROR: %s",pam_strerror(pamh, retcode)); \
 +	pam_end(pamh, retcode); exit(1); \
 +	}
 +
