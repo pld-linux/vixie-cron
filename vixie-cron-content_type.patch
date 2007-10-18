@@ -1,0 +1,20 @@
+--- vixie-cron-4.1/do_command.c~	2007-10-17 12:42:42.000000000 +0300
++++ vixie-cron-4.1/do_command.c	2007-10-18 20:37:12.585623733 +0300
+@@ -471,6 +471,7 @@
+ 				char	**env;
+ 				char	mailcmd[MAX_COMMAND];
+ 				char	hostname[MAXHOSTNAMELEN];
++				char	*content_type = env_get("CONTENT_TYPE", e->envp);
+ 
+ 				gethostname(hostname, MAXHOSTNAMELEN);
+ 				if (strlens(MAILFMT, MAILARG, NULL) + 1
+@@ -492,6 +493,9 @@
+ 				fprintf(mail, "Date: %s\n",
+ 					arpadate(&StartTime));
+ #endif /*MAIL_DATE*/
++				if (content_type) {
++					fprintf(mail, "Content-Type: %s\n", content_type);
++				}
+ 				for (env = e->envp;  *env;  env++)
+ 					fprintf(mail, "X-Cron-Env: <%s>\n",
+ 						*env);
