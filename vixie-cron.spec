@@ -24,7 +24,7 @@ Summary(uk.UTF-8):	Vixie cron - демон, що запускає процеси
 Summary(zh_CN.UTF-8):	用于在预设时间执行指定程序的 Vixie cron 后台程序。
 Name:		vixie-cron
 Version:	4.1
-Release:	14
+Release:	15
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.isc.org/isc/cron/cron_%{version}.shar
@@ -53,6 +53,7 @@ Patch13:	%{name}-nodebug.patch
 Patch14:	%{name}-syslog-facility.patch
 Patch15:	%{name}-saved-uids.patch
 Patch16:	%{name}-setuid_check.patch
+Patch17:	%{name}-content_type.patch
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	pam-devel
 BuildRequires:	rpmbuild(macros) >= 1.268
@@ -199,6 +200,7 @@ vixie-cron 软件包包含 cron 的 Vixie 版本。Cron 是标准的 UNIX
 %patch14 -p0
 %patch15 -p1
 %patch16 -p1
+%patch17 -p1
 
 %build
 %{__make} \
