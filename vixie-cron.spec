@@ -68,12 +68,10 @@ Requires:	/sbin/chkconfig
 Requires:	psmisc >= 20.1
 Requires:	rc-scripts
 Provides:	crondaemon
-Provides:	crontabs >= 1.7
+Provides:	crontabs = 1.7
 Provides:	group(crontab)
+Obsoletes:	crondaemon
 Obsoletes:	crontabs
-Obsoletes:	mcron
-Conflicts:	fcron
-Conflicts:	hc-cron
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
