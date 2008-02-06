@@ -277,16 +277,14 @@ if [ "$1" = "0" ]; then
 fi
 
 %triggerpostun -- vixie-cron < 3.0.1-86
-for i in `/bin/ls /var/spool/cron 2>/dev/null`
-do
-	chown ${i} /var/spool/cron/${i} 2>/dev/null || :
+for user in $(/bin/ls /var/spool/cron 2>/dev/null); do
+	chown $user /var/spool/cron/$user 2>/dev/null || :
 done
 /bin/chmod 660 /var/log/cron
 /bin/chgrp crontab /var/log/cron
 /bin/chmod 640 /etc/cron/cron.*
 /bin/chgrp crontab /etc/cron/cron.*
 
-%triggerpostun -- vixie-cron < 3.0.1-74
 if [ -f /etc/cron.d/cron.allow.rpmsave ]; then
 	mv -f /etc/cron.d/cron.allow.rpmsave /etc/cron/cron.allow
 fi
@@ -299,8 +297,6 @@ fi
 if [ -f /etc/cron.d/cron.deny ]; then
 	mv -f /etc/cron.d/cron.deny /etc/cron/cron.deny
 fi
-
-%triggerpostun -- vixie-cron < 3.0.1-71
 if [ -f /etc/cron.allow ]; then
 	mv -f /etc/cron.allow /etc/cron/cron.allow
 fi
@@ -312,10 +308,8 @@ fi
 /sbin/chkconfig --del crond
 /sbin/chkconfig --add crond
 
-%triggerpostun -- hc-cron < 0.14-11.2
-for i in `/bin/ls /var/spool/cron 2>/dev/null`
-do
-	chown ${i} /var/spool/cron/${i} 2>/dev/null || :
+for user in $(/bin/ls /var/spool/cron 2>/dev/null); do
+	chown $user /var/spool/cron/$user 2>/dev/null || :
 done
 /bin/chmod 660 /var/log/cron
 /bin/chgrp crontab /var/log/cron
