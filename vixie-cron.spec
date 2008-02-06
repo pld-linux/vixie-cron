@@ -24,7 +24,7 @@ Summary(uk.UTF-8):	Vixie cron - демон, що запускає процеси
 Summary(zh_CN.UTF-8):	用于在预设时间执行指定程序的 Vixie cron 后台程序。
 Name:		vixie-cron
 Version:	4.1
-Release:	17
+Release:	18
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.isc.org/isc/cron/cron_%{version}.shar
@@ -223,33 +223,32 @@ install %{SOURCE4} $RPM_BUILD_ROOT/etc/cron.d/crontab
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/cron
 
 for a in fi fr id ja ko pl ; do
-	if test -f $a/man1/crontab.1 ; then
+	if test -f $a/man1/crontab.1; then
 		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man1
 		install $a/man1/crontab.1 $RPM_BUILD_ROOT%{_mandir}/$a/man1
 	fi
-	if test -f $a/man5/crontab.5 ; then
+	if test -f $a/man5/crontab.5; then
 		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man5
 		install $a/man5/crontab.5 $RPM_BUILD_ROOT%{_mandir}/$a/man5
 	fi
-	if test -f $a/man8/cron.8 ; then
+	if test -f $a/man8/cron.8; then
 		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man8
 		install $a/man8/cron.8 $RPM_BUILD_ROOT%{_mandir}/$a/man8
-		echo .so cron.8 > $RPM_BUILD_ROOT%{_mandir}/$a/man8/crond.8
 	fi
 done
 
 touch $RPM_BUILD_ROOT/var/log/cron
 
-cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.allow << EOF
+cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.allow << 'EOF'
 # cron.allow	This file describes the names of the users which are
 #		allowed to use the local cron daemon
 root
 EOF
 
-cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.deny << EOF2
+cat > $RPM_BUILD_ROOT%{_sysconfdir}/cron/cron.deny << 'EOF'
 # cron.deny	This file describes the names of the users which are
 #		NOT allowed to use the local cron daemon
-EOF2
+EOF
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -263,7 +262,7 @@ umask 027
 touch /var/log/cron
 chgrp crontab /var/log/cron
 chmod 660 /var/log/cron
-%service crond restart "cron daemon"
+%service crond restart "Cron Daemon"
 
 %preun
 if [ "$1" = "0" ]; then
@@ -277,6 +276,7 @@ if [ "$1" = "0" ]; then
 fi
 
 %triggerpostun -- hc-cron
+# reinstall crond init.d links, which could be different
 /sbin/chkconfig --del crond
 /sbin/chkconfig --add crond
 
