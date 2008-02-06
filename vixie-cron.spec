@@ -276,7 +276,7 @@ if [ "$1" = "0" ]; then
 	%groupremove crontab
 fi
 
-%triggerpostun -- vixie-cron <= 3.0.1-85
+%triggerpostun -- vixie-cron < 3.0.1-86
 for i in `/bin/ls /var/spool/cron 2>/dev/null`
 do
 	chown ${i} /var/spool/cron/${i} 2>/dev/null || :
@@ -286,7 +286,7 @@ done
 /bin/chmod 640 /etc/cron/cron.*
 /bin/chgrp crontab /etc/cron/cron.*
 
-%triggerpostun -- vixie-cron <= 3.0.1-73
+%triggerpostun -- vixie-cron < 3.0.1-74
 if [ -f /etc/cron.d/cron.allow.rpmsave ]; then
 	mv -f /etc/cron.d/cron.allow.rpmsave /etc/cron/cron.allow
 fi
@@ -300,7 +300,7 @@ if [ -f /etc/cron.d/cron.deny ]; then
 	mv -f /etc/cron.d/cron.deny /etc/cron/cron.deny
 fi
 
-%triggerpostun -- vixie-cron <= 3.0.1-70
+%triggerpostun -- vixie-cron < 3.0.1-71
 if [ -f /etc/cron.allow ]; then
 	mv -f /etc/cron.allow /etc/cron/cron.allow
 fi
@@ -312,7 +312,7 @@ fi
 /sbin/chkconfig --del crond
 /sbin/chkconfig --add crond
 
-%triggerpostun -- hc-cron <= 0.14-12
+%triggerpostun -- hc-cron < 0.14-11.2
 for i in `/bin/ls /var/spool/cron 2>/dev/null`
 do
 	chown ${i} /var/spool/cron/${i} 2>/dev/null || :
