@@ -1,0 +1,1 @@
+- take $CONTENT_TYPE env to specify email Content-Type header; rel 15
