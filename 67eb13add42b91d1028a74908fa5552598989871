@@ -1,0 +1,5 @@
+- release 42,
+- fixes in default crontab:
+   - SHELL=/bin/sh instead SHELL=/bin/bash,
+   - removed "!" from each crontab entries before /usr/bin/run-parts (this
+     causes not run /usr/bin/run-parts).
