@@ -24,7 +24,7 @@ Summary(uk.UTF-8):	Vixie cron - демон, що запускає процеси
 Summary(zh_CN.UTF-8):	用于在预设时间执行指定程序的 Vixie cron 后台程序。
 Name:		vixie-cron
 Version:	4.1
-Release:	20
+Release:	21
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.isc.org/isc/cron/cron_%{version}.shar
@@ -54,6 +54,7 @@ Patch14:	%{name}-syslog-facility.patch
 Patch15:	%{name}-saved-uids.patch
 Patch16:	%{name}-setuid_check.patch
 Patch17:	%{name}-content_type.patch
+Patch18:	%{name}-mailto-chars.patch
 %{?with_selinux:BuildRequires:	libselinux-devel}
 BuildRequires:	pam-devel
 BuildRequires:	rpmbuild(macros) >= 1.268
@@ -199,6 +200,7 @@ vixie-cron 软件包包含 cron 的 Vixie 版本。Cron 是标准的 UNIX
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p1
 
 %build
 %{__make} \
@@ -222,7 +224,7 @@ install %{SOURCE3} $RPM_BUILD_ROOT/etc/sysconfig/cron
 install %{SOURCE4} $RPM_BUILD_ROOT/etc/cron.d/crontab
 install %{SOURCE6} $RPM_BUILD_ROOT/etc/pam.d/cron
 
-for a in fi fr id ja ko pl ; do
+for a in fi fr id ja ko pl; do
 	if test -f $a/man1/crontab.1; then
 		install -d $RPM_BUILD_ROOT%{_mandir}/$a/man1
 		install $a/man1/crontab.1 $RPM_BUILD_ROOT%{_mandir}/$a/man1
