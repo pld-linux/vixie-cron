@@ -24,7 +24,7 @@ Summary(uk.UTF-8):	Vixie cron - демон, що запускає процеси
 Summary(zh_CN.UTF-8):	用于在预设时间执行指定程序的 Vixie cron 后台程序。
 Name:		vixie-cron
 Version:	4.1
-Release:	22
+Release:	23
 License:	distributable
 Group:		Daemons
 Source0:	ftp://ftp.isc.org/isc/cron/cron_%{version}.shar
